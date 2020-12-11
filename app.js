@@ -3,21 +3,16 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+const mongooseConnection = require('./dbAPI').connection;
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 const indexRouter = require('./routes/index');
+const registerRouter = require('./routes/register');
+const loginRouter = require('./routes/login');
 const usersRouter = require('./routes/users');
-
-
-const fs = require('fs');
-const mongoUri = fs.readFileSync('config', 'utf-8')
-        .split('\n')
-        .find(str => str.split(':')[0] === 'mongoUri')
-        .split('mongoUri:')[1];
-mongoose.connect(mongoUri);
-mongoose.Promise = global.Promise;
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
 const app = express();
@@ -31,9 +26,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+
+app.use(
+  session({
+    secret: 'secret key',
+    saveUninitialized: true,
+    store: new MongoStore({ mongooseConnection: mongooseConnection })
+  })
+);
+
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/register', registerRouter);
+app.use('/login', loginRouter);
+// app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

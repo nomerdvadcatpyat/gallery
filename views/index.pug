@@ -1,22 +1,23 @@
 extends layout
 
 block content
-  div.content__column.column-1
-    each image in column_1
-      section.content__img-container.img-container
-        img.img-container__img(src = image.path, alt = image.alt)
-        section.img-container__info.img-info
-          p.img-info__text #{image.additionInfo}
-  div.content__column.column-2
-    each image in column_2
-      section.content__img-container.img-container
-        img.img-container__img(src = image.path, alt = image.alt)
-        section.img-container__info.img-info
-          p.img-info__text #{image.additionInfo}
-  div.content__column.column-3
-    each image in column_3
-      section.content__img-container.img-container
-        img.img-container__img(src = image.path, alt = image.alt)
-        section.img-container__info.img-info
-          p.img-info__text #{image.additionInfo}
+  main.content
+    div.content__column.column-1
+      each image in column_1
+        section.content__img-container.img-container
+          img.img-container__img(src = image.path, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.additionInfo}
+    div.content__column.column-2
+      each image in column_2
+        section.content__img-container.img-container
+          img.img-container__img(src = image.path, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.additionInfo}
+    div.content__column.column-3
+      each image in column_3
+        section.content__img-container.img-container
+          img.img-container__img(src = image.path, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.additionInfo}
     

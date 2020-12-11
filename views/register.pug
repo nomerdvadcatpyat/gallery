@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    main.register-content
+        form.register-form(action="" method="POST")
+            input.login.text(type="text" placeholder="Логин")
+            input.pass.text(type="password" placeholder="Пароль")
+            input.rePass.text(type="password" placeholder="Повторите пароль")
+            input.submit(type="submit" value="submit")
+    script(src= "/javascripts/register.js")

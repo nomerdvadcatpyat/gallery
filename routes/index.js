@@ -1,13 +1,11 @@
-const { static } = require('express');
 var express = require('express');
 var router = express.Router();
-const Image = require('../models/image');
+const api = require('../dbAPI.js');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  Image.find( {}, function(err, data) {
-    if(err) console.log(err);
-
+  api.getImages({})
+  .then(data => {
     const column_1 = [];
     const column_2 = [];
     const column_3 = [];
@@ -20,9 +18,9 @@ router.get('/', function(req, res, next) {
 
       curColumn = (++curColumn) % 3;
     });
-    res.render('index', { column_1: column_1, column_2: column_2, column_3: column_3 });
+    res.render('index', { user: req.session.user, column_1: column_1, column_2: column_2, column_3: column_3 });
   })
-
+  .catch(err => next(err));
 });
 
 module.exports = router;
