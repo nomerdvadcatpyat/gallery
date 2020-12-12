@@ -5,18 +5,18 @@ $(function() {
 
   $(".modal-open").on('click', function(e){
     console.log(e);
-    $(document.body).addClass('is-open-modal');
+    $(document.body).css('overflow', 'hidden');
 		$('.sign-in-container').addClass('is-open');
   });
 
   $(document).on('click', function(e){
 		if (!(
-		($(e.target).parents('.sign-in-container').length)
-		||	($(e.target).hasClass('sign-in-container'))
-		||	($(e.target).hasClass('modal-open')))
+		($(e.target).parents('.sign-in-container').length) // (не) если мы кликнули точно по модалке
+		||	($(e.target).hasClass('sign-in-container')) // и если мы кликаем не на форму
+		||	($(e.target).hasClass('modal-open'))) // и если мы кликаем не на кнопку открытия формы
 		) {
-      $(document.body).removeClass('is-open-modal');
       $('.sign-in-container').removeClass('is-open');
+      $(document.body).css('overflow', 'auto');
 		}
 	});
 
