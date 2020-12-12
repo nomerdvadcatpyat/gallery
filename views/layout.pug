@@ -4,14 +4,46 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/stylesheets/style.css")
+    link(rel="stylesheet" href="/stylesheets/register.css")
     script(src="https://code.jquery.com/jquery-3.5.1.min.js")
     title Gallery
   body
     header.header
-      if(user) 
-        a.header__link(href="logout") Выход
+      if(userLogin)
+        p Вы вошли как #{userLogin} 
+        a.form-button(href="/logout") Выход
       else
-        a.header__link(href="/register") Регистрация
-        a.header__link(href="/login") Вход
+        button.modal-open.form-button Вход/Регистрация
+
+    //- Модальное окно входа/регистрации  
+    .sign-in-container
+      .sign-in-container__form.sign-up-inner-container
+        form.sign-in-form(action="#")
+          h1.sign-in-container__title Регистрация
+          input.login.sign-in-container__input(type="text" placeholder="Логин")
+          input.pass.sign-in-container__input(type="password" placeholder="Пароль")
+          input.rePass.sign-in-container__input(type="password" placeholder="Повторите пароль")
+          button.sign-up-inner-container__submit.form-button Зарегистрироваться
+      .sign-in-container__form.sign-in-inner-container
+        form.sign-in-form(action="#")
+          h1.sign-in-container__title Вход
+          input.sign-in-login.sign-in-container__input(type="text" placeholder="Логин")
+          input.sign-in-pass.sign-in-container__input(type="password" placeholder="Пароль")
+          button.sign-in-inner-container__submit.form-button Войти
+      .sign-in-container__overlay
+        .overlay
+          .overlay-panel.overlay-left
+            h1.sign-in-container__title Добро пожаловать!
+            p.sign-in-container__text Уже имеете аккаунт?
+            button#signIn-switch.form-button.switch-button Войти
+          .overlay-panel.overlay-right
+            h1.sign-in-container__title Добро пожаловать. Снова.
+            p.sign-in-container__text Еще нет аккаунта?
+            button#signUp-switch.form-button.switch-button Зарегистрироваться
+
     block content
+
+
+  script(src="/javascripts/register.js")
+  script(src="/javascripts/login.js")
 

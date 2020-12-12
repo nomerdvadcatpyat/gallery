@@ -2,13 +2,9 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = require('./models/user.js');
 const Image = require('./models/image');
-const { resolve } = require('path');
-const fs = require('fs');
+const config = require('./config');
 
-const mongoUri = fs.readFileSync('config', 'utf-8')
-        .split('\n')
-        .find(str => str.split(':')[0] === 'mongoUri')
-        .split('mongoUri:')[1];
+const mongoUri = config.mongoUri;
 mongoose.connect(mongoUri);
 mongoose.Promise = global.Promise;
 exports.connection = mongoose.connection;
@@ -57,16 +53,20 @@ exports.getUser = function(condition) {
 // }
  
 exports.checkUser = function(userData) {
-    return User
+  return new Promise((resolve, reject) => {
+    User
     .findOne({login: userData.login})
     .then(doc => {
-        if ( doc.password == hash(userData.password) ) {
-            console.log("User password is ok");
-            return Promise.resolve(doc)
-        } else {
-            return Promise.reject("Error wrong")
-        }
-    });
+      console.log(doc)
+      if(doc === null) resolve(null);
+      if ( doc.password == hash(userData.password) ) {
+          console.log("User password is ok");
+          resolve(doc);
+      }
+      resolve(null);
+    })
+    .catch(err => reject(err));
+  });
 }
  
 function hash(text) {

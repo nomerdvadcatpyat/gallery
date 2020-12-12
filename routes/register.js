@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const api = require('../dbAPI');
 
-router.get('/', function(req, res, next) {
-  res.render('register');
-});
+// router.get('/', function(req, res, next) {
+//   res.render('register');
+// });
 
 router.post('/', function(req, res, next) {
   const login = req.body.login;
@@ -26,6 +26,8 @@ router.post('/', function(req, res, next) {
         })
         .then(user => {
           console.log('then user', user);
+          req.session.userId = user.id;
+          req.session.userLogin = user.login;
           res.json({ok: true});
         })
         .catch(err => res.json(err));
@@ -36,9 +38,9 @@ router.post('/', function(req, res, next) {
           ok: false,
           error: 'Пользователь с таким логином уже существует',
           fields: ['login']
-        })
+        });
       }
-    })
+    });
   }
 });
 
@@ -83,26 +85,4 @@ function findErrorInFields(login, pass, rePass) {
   return result;
 }
 
-
-// function createUser(login, pass) {
-//     console.log(login, pass);
-//     return new Promise((resolve, reject) => {
-//         api.createUser({
-//         login: login,
-//         password: pass
-//         })
-//         .then(user => {
-//             console.log(user);
-//             resolve({ok: true});
-//         })
-//         .catch(err => {
-//             console.log(err);
-//             reject({
-//                 ok: false,
-//                 error: 'Ошибка'
-//             });
-//         });
-//     });
-// }
-  
 module.exports = router;

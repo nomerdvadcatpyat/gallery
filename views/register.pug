@@ -2,9 +2,9 @@ extends layout
 
 block content
     main.register-content
-        form.register-form(action="" method="POST")
-            input.login.text(type="text" placeholder="Логин")
-            input.pass.text(type="password" placeholder="Пароль")
-            input.rePass.text(type="password" placeholder="Повторите пароль")
+        form.register-form(action="/register" method="POST")
+            input.login.sign-in-container__text(type="text" placeholder="Логин" name="login")
+            input.pass.sign-in-container__text(type="password" placeholder="Пароль" name="pass")
+            input.rePass.sign-in-container__text(type="password" placeholder="Повторите пароль" name="rePass")
             input.submit(type="submit" value="submit")
     script(src= "/javascripts/register.js")

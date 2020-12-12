@@ -1,5 +1,27 @@
 $(function() {
-  $('.submit').on('click', function(e) {
+
+  $('#signUp-switch').on('click', () => $('.sign-in-container').addClass("right-panel-active"));
+  $('#signIn-switch').on('click', () => $('.sign-in-container').removeClass("right-panel-active"));
+
+  $(".modal-open").on('click', function(e){
+    console.log(e);
+    $(document.body).addClass('is-open-modal');
+		$('.sign-in-container').addClass('is-open');
+  });
+
+  $(document).on('click', function(e){
+		if (!(
+		($(e.target).parents('.sign-in-container').length)
+		||	($(e.target).hasClass('sign-in-container'))
+		||	($(e.target).hasClass('modal-open')))
+		) {
+      $(document.body).removeClass('is-open-modal');
+      $('.sign-in-container').removeClass('is-open');
+		}
+	});
+
+  // Отправка данных с формы по нажатию на submit
+  $('.sign-up-inner-container__submit').on('click', function(e) {
     e.preventDefault();
     const user = {
       login: $('.login').val(),
@@ -7,6 +29,7 @@ $(function() {
       rePass: $('.rePass').val() 
     }
     
+    console.log(user);
     $.ajax({
       type: "POST",
       data: JSON.stringify(user), 
@@ -16,17 +39,16 @@ $(function() {
     .done(function (data) {
       console.log(data);
       if(!data.ok) {
+        e.preventDefault();
         if($('.error-message').length == 0)
-          $('.register-form').after('<p class="error-message">' + data.error + '</p>');
+          $('.sign-up-inner-container__submit').after('<p class="error-message">' + data.error + '</p>');
         else $('.error-message').text(data.error);
-        if(data.fields) {
-          data.fields.forEach(item => {
-              $(`.${item}`).addClass('error-field')
-          })
-        }
+        if(data.fields) 
+          data.fields.forEach(item => { $(`.${item}`).addClass('error-field') })
       }
       else {
-        $('.register-form').after('<p class="success"> Регистрация прошла успешно </p>');
+         $('.sign-up-inner-container__submit').after('<p class="success"> Регистрация прошла успешно </p>');
+         $(location).attr('href', '/');
       }
     })
     .fail(function(err) {
@@ -37,5 +59,5 @@ $(function() {
   $('input').on('focus', function() {
     $('p.error-message').remove();
     $(this).removeClass('error-field');
-  })
+  });
 })

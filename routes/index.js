@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 
       curColumn = (++curColumn) % 3;
     });
-    res.render('index', { user: req.session.user, column_1: column_1, column_2: column_2, column_3: column_3 });
+    res.render('index', { userLogin: req.session.userLogin, column_1: column_1, column_2: column_2, column_3: column_3 });
   })
   .catch(err => next(err));
 });
