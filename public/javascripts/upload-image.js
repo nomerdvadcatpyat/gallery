@@ -37,7 +37,8 @@ $(function() {
     e.preventDefault();
 
     const formData = new FormData(this);
-    console.log(formData);
+    formData.set('alt', $('.img-description').val());
+
     $.ajax({
       type: 'POST',
       url: '/upload/image',
@@ -46,7 +47,10 @@ $(function() {
       contentType: false,
       success: r => console.log(r),
       error: r => console.log(r)
+    })
+    .done(function (data) {
+      if(data.ok) $(location).attr('href', '/');
     });
    });
-   
+
 });

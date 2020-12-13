@@ -9,12 +9,11 @@ router.get('/', function(req, res, next) {
     const column_1 = [];
     const column_2 = [];
     const column_3 = [];
-
     let curColumn = 0;
     data.forEach( jsonPic => {
-      if(curColumn == 0) column_1.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
-      else if(curColumn == 1) column_2.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
-      else if(curColumn == 2) column_3.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
+      if(curColumn == 0) column_1.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner});
+      else if(curColumn == 1) column_2.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
+      else if(curColumn == 2) column_3.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
 
       curColumn = (++curColumn) % 3;
     });

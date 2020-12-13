@@ -19,6 +19,22 @@ exports.getImages = function(condition) {
     }));
 }
 
+exports.uploadImage = function ({ path, alt, owner }) {
+  return new Promise((resolve, reject) => {
+    User.findById(owner)
+    .then(owner => {
+      Image.create({ path: path, alt: alt, owner: owner.login}, function(err, data) {
+        console.log('create data', data);
+        if(err) {
+          console.log(err);
+          reject(err);
+        }
+        resolve(data);
+      })
+    });
+  });
+}
+
 // User API
 exports.createUser = function(userData){
     const user = {

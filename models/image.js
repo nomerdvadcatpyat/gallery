@@ -1,13 +1,18 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ImageSchema = new Schema(
-    {
-        path: String,
-        alt: String,
-        additionInfo: String // для теста, потом заменить на овнера
-        // owner: ... Реализовать потом (после сделанной авторизации), ссылка на документ владельца картинки в бд
-    }
+const ImageSchema = new Schema({
+    path: {
+      type: String,
+      required: true
+    },
+    alt: String,
+    owner: String
+    // owner: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'User'
+    // }
+  }
 );
 
 ImageSchema
