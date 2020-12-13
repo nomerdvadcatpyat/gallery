@@ -1,26 +1,54 @@
 var express = require('express');
 var router = express.Router();
-const api = require('../dbAPI.js');
+const dbapi = require('../dbAPI.js');
+const sizeOf = require('image-size');
+const path = require('path');
+const config = require('../config');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  api.getImages({})
+  dbapi.getImages({})
   .then(data => {
-    const column_1 = [];
-    const column_2 = [];
-    const column_3 = [];
+    const column1 = new Column();
+    const column2 = new Column();
+    const column3 = new Column();
 
-    let curColumn = 0;
     data.forEach( jsonPic => {
-      if(curColumn == 0) column_1.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
-      else if(curColumn == 1) column_2.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
-      else if(curColumn == 2) column_3.push({ path: jsonPic.path, alt: jsonPic.alt, additionInfo: jsonPic.additionInfo });
+      const picHeight = sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, jsonPic.path)).height; // Почему то здесь он ожидает абсолютный путь
+      switch(Column.getMinCloumn(column1, column2, column3)) {
+        case column1:
+          console.log('c1')
+          column1.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner }); 
+          column1.height += picHeight;
+          break;
 
-      curColumn = (++curColumn) % 3;
+        case column2: 
+          console.log('c2')
+          column2.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
+          column2.height += picHeight; 
+          break;
+        
+        case column3: 
+          console.log('c3')
+          column3.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
+          column3.height += picHeight;
+          break;
+      }
     });
-    res.render('index', { userLogin: req.session.userLogin, column_1: column_1, column_2: column_2, column_3: column_3 });
+    res.render('index', { userLogin: req.session.userLogin, column1: column1.pics, column2: column2.pics, column3: column3.pics });
   })
   .catch(err => next(err));
 });
+
+class Column {
+  constructor() {
+    this.pics = [],
+    this.height = 0
+  }
+
+  static getMinCloumn(...columns) {
+    return columns.sort((c1,c2) => c1.height - c2.height)[0];
+  }
+}
 
 module.exports = router;

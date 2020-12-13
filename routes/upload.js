@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path')
+const path = require('path');
+const dbapi = require('../dbAPI');
+const config = require('../config');
 
 const multer = require('multer'); // модуль для обработки файлов
 
 const storage = multer.diskStorage({
   destination: (req, file, cd) => {
-    cd(null, 'public/images');
+    cd(null, path.join(config.STATIC_DESTINATION, config.IMAGES_DESTINATION));
   },
   filename: (req, file, cb) => {
     console.log(file);
@@ -39,12 +41,24 @@ router.post('/image', (req, res) => {
         error = 'Только jpeg и png'
       }
     }
+    console.log('body1 ', req.body);
+    console.log(req.file);
+    console.log(req.session)
     console.log(error);
+
+    dbapi.uploadImage({ path: path.join(`/${config.IMAGES_DESTINATION}`, req.file.filename), alt: req.body.alt, owner: req.session.userLogin })
+    .then(data => {
+      console.log('add image in db', data)
+    })
+    .catch(err => console.log('err from add image in db', err));
+
     res.json({
       ok: !error,
       error
     })
   });
+
+  console.log('body2 ', req.body);
 });
 
 module.exports = router;

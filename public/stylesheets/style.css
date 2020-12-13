@@ -40,6 +40,7 @@ body {
 }
 
 .content__column {
+  max-width: 33%;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -66,6 +67,7 @@ body {
   opacity: 0;
 
   display: flex;
+  flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
 

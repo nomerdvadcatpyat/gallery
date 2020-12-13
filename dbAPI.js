@@ -13,10 +13,23 @@ this.connection.on('error', console.error.bind(console, 'MongoDB connection erro
 // Image API
 exports.getImages = function(condition) {
     return new Promise((resolve, reject) => 
-        Image.find(condition, function(err, data) {
-        if(err) reject(err);
-        resolve(data);
+      Image.find(condition, function(err, data) {
+      if(err) reject(err);
+      resolve(data);
     }));
+}
+
+exports.uploadImage = function ({ path, alt, owner }) {
+  return new Promise((resolve, reject) => {
+    Image.create({ path: path, alt: alt, owner: owner}, function(err, data) {
+      console.log('create data', data);
+      if(err) {
+        console.log(err);
+        reject(err);
+      }
+      resolve(data);
+    })
+  });
 }
 
 // User API
