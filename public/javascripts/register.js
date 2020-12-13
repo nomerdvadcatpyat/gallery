@@ -39,7 +39,6 @@ $(function() {
     .done(function (data) {
       console.log(data);
       if(!data.ok) {
-        e.preventDefault();
         if($('.error-message').length == 0)
           $('.sign-up-inner-container__submit').after('<p class="error-message">' + data.error + '</p>');
         else $('.error-message').text(data.error);

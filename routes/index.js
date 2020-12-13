@@ -14,23 +14,24 @@ router.get('/', function(req, res, next) {
     const column3 = new Column();
 
     data.forEach( jsonPic => {
-      const picHeight = sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, jsonPic.path)).height; // Почему то здесь он ожидает абсолютный путь
+      console.log(jsonPic)
+      const picHeight = sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, jsonPic.minImage)).height; // Почему то здесь он ожидает абсолютный путь
       switch(Column.getMinCloumn(column1, column2, column3)) {
         case column1:
           console.log('c1')
-          column1.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner }); 
+          column1.pics.push({ fullImage: jsonPic.fullImage, minImage: jsonPic.minImage, alt: jsonPic.alt, owner: jsonPic.owner }); 
           column1.height += picHeight;
           break;
 
         case column2: 
           console.log('c2')
-          column2.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
+          column2.pics.push({ fullImage: jsonPic.fullImage, minImage: jsonPic.minImage, alt: jsonPic.alt, owner: jsonPic.owner });
           column2.height += picHeight; 
           break;
         
         case column3: 
           console.log('c3')
-          column3.pics.push({ path: jsonPic.path, alt: jsonPic.alt, owner: jsonPic.owner });
+          column3.pics.push({ fullImage: jsonPic.fullImage, minImage: jsonPic.minImage, alt: jsonPic.alt, owner: jsonPic.owner });
           column3.height += picHeight;
           break;
       }
