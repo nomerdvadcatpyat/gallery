@@ -1,29 +1,29 @@
 extends layout
 
 block content
-  main.content
+  - let i = 0;
+  main.content(data-all-count = count, data-col-1-length = col1Length, data-col-2-length = col2Length, data-col-3-length = col3Length)
     div.content__column.column-1
-      each image in column1
-        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
-          section.content__img-container.img-container
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              p.img-info__text #{image.owner}
-              p.img-info__text #{image.alt}
+      each image, index in column1
+        section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 1, data-col-position=index)
+          img.img-container__img(src = image.minImage, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.owner}
+            p.img-info__text #{image.alt}
+        - i++;
     div.content__column.column-2
-      each image in column2
-        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
-          section.content__img-container.img-container
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              p.img-info__text #{image.owner}
-              p.img-info__text #{image.alt}
+      each image, index in column2
+        section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 2, data-col-position=index)
+          img.img-container__img(id = i, src = image.minImage, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.owner}
+            p.img-info__text #{image.alt}
+          - i++;
     div.content__column.column-3
-      each image in column3
-        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
-          section.content__img-container.img-container
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              p.img-info__text #{image.owner}
-              p.img-info__text #{image.alt}
-      
+      each image, index in column3
+        section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 3, data-col-position=index)
+          img.img-container__img(id = i, src = image.minImage, alt = image.alt)
+          section.img-container__info.img-info
+            p.img-info__text #{image.owner}
+            p.img-info__text #{image.alt}
+        - i++;

@@ -6,13 +6,14 @@ html(lang="en")
     link(rel="stylesheet" href="/stylesheets/index.css")
     link(rel="stylesheet" href="/stylesheets/register.css")
     link(rel="stylesheet" href="/stylesheets/upload-image.css")
-    link(rel="stylesheet", href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css")
     link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
     script(src="https://code.jquery.com/jquery-3.5.1.min.js")
-    script(src="/libs/fancybox/jquery.fancybox.min.js")
     title Gallery
   body
     header.header
+      .full-img-pic-layout.hidden
+        img.arrow-right(src="/images/site-images/arrow-right.png")
+        img.arrow-left(src="/images/site-images/arrow-left.png")
       .modal-layout.hidden
       if(userLogin)
         button.form-button.upload-image Загрузить Картинку

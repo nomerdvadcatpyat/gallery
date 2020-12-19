@@ -7,15 +7,17 @@ const config = require('../config');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
   dbapi.getImages({})
   .then(data => {
     const column1 = new Column();
     const column2 = new Column();
     const column3 = new Column();
-
+    let count = 0;
     data.forEach( jsonPic => {
       console.log(jsonPic)
       const picHeight = sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, jsonPic.minImage)).height; // Почему то здесь он ожидает абсолютный путь
+      count++;
       switch(Column.getMinCloumn(column1, column2, column3)) {
         case column1:
           console.log('c1')
@@ -36,7 +38,11 @@ router.get('/', function(req, res, next) {
           break;
       }
     });
-    res.render('index', { userLogin: req.session.userLogin, column1: column1.pics, column2: column2.pics, column3: column3.pics });
+
+    res.render('index', { userLogin: req.session.userLogin, column1: column1.pics, col1Length: column1.pics.length,
+                                                            column2: column2.pics, col2Length: column2.pics.length,
+                                                            column3: column3.pics, col3Length: column3.pics.length,
+                                                            count: count });
   })
   .catch(err => next(err));
 });
