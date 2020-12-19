@@ -5,8 +5,9 @@ $(function() {
 
   $(".modal-open").on('click', function(e){
     console.log(e);
-    $(document.body).css('overflow', 'hidden');
-		$('.sign-in-container').addClass('is-open');
+    // $(document.body).css('overflow', 'hidden');
+    $('.sign-in-container').addClass('is-open');
+    $('.overlay-register-modal').css('display','flex');
   });
 
   $(document).on('click', function(e){
@@ -16,7 +17,8 @@ $(function() {
 		||	($(e.target).hasClass('modal-open'))) // и если мы кликаем не на кнопку открытия формы
 		) {
       $('.sign-in-container').removeClass('is-open');
-      $(document.body).css('overflow', 'auto');
+      // $(document.body).css('overflow', 'auto');
+      $('.overlay-register-modal').css('display','none');
 		}
 	});
 

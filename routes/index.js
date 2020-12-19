@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
     const column3 = new Column();
 
     data.forEach( jsonPic => {
-      console.log(jsonPic)
+      console.log('pic ', jsonPic)
       const picHeight = sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, jsonPic.minImage)).height; // Почему то здесь он ожидает абсолютный путь
       switch(Column.getMinCloumn(column1, column2, column3)) {
         case column1:

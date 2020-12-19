@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  main.upload-content
+    form.upload-image-form(method="post" action="/upload/image" enctype="multipart/form-data" id="fileinfo")
+      input#file.input-img(type="file" name="file" accept="image/jpeg,image/png")
+      label.upload-image-label(for="file")
+        i.icon.fa.fa-check
+        span.file-name Загрузить картинку
+      if(error)
+        input.img-description(type="text" name="img-descr" placeholder="Краткое описание картинки" value=alt)
+        p.error-field #{error}
+      else 
+        input.img-description(type="text" name="img-descr" placeholder="Краткое описание картинки")
+      input.form-button.upload-img-button(type="submit", value="Отправить")

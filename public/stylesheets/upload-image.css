@@ -1,3 +1,12 @@
+.upload-content {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
 .upload-image-content {
   background-color: rgb(204, 112, 112);
   /* height: 100%; */
@@ -18,7 +27,7 @@
   padding: 2%;
   border-radius: 2%;
   /* display: flex; */
-  display: none;
+  display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
   /* align-items: center; */
@@ -34,10 +43,12 @@
   display:block;
   border:2px solid rgb(0, 0, 0)
 }
+
 .upload-image-label:hover, .upload-image-label:focus{
   color:rgb(0, 0, 0);
   border-color:rgb(0, 0, 0);
 }
+
 .input-img{
   width:.1px;
   height:.1px;
@@ -46,6 +57,7 @@
   position:absolute;
   z-index:-1
 }
+
 .input-img + .upload-image-label{
   overflow:hidden;
   text-overflow:ellipsis;
@@ -76,3 +88,4 @@
 .is-upload-img-open {
   display: flex;
 }
+

@@ -16,8 +16,9 @@ $(function() {
   // открытие модалки загрузки картинки
   $('.upload-image').on('click', function(e) {
     if (!$('.upload-image').hasClass('non-active')) {
-      $(document.body).css('overflow','hidden'); 
+      // $(document.body).css('overflow','hidden'); 
       $('.upload-image-form').addClass('is-upload-img-open');
+      $('.overlay-upload-modal').css('display','flex');
     }
   });
 
@@ -28,36 +29,37 @@ $(function() {
         || $(e.target).hasClass('upload-image-form')
         || $(e.target).hasClass('upload-image'))) {
       $('.upload-image-form').removeClass('is-upload-img-open');
-      $(document.body).css('overflow','auto'); 
+      $('.overlay-upload-modal').css('display','none');
+      // $(document.body).css('overflow','auto'); 
 		}
   });
   
   // upload
-  $('#fileinfo').on('submit', function (e) {
-    e.preventDefault();
+  // $('#fileinfo').on('submit', function (e) {
+  //   e.preventDefault();
 
-    const formData = new FormData(this);
-    formData.set('alt', $('.img-description').val())
-    // console.log(formData);
-    $.ajax({
-      type: 'POST',
-      url: '/upload/image',
-      data: formData,
-      processData: false,
-      contentType: false,
-    })
-    .done(data => {
-      console.log(data);
+  //   const formData = new FormData(this);
+  //   formData.set('alt', $('.img-description').val())
+  //   // console.log(formData);
+  //   $.ajax({
+  //     type: 'POST',
+  //     url: '/upload/image',
+  //     data: formData,
+  //     processData: false,
+  //     contentType: false,
+  //   })
+  //   .done(data => {
+  //     console.log(data);
 
-      if(!data.ok) {
-        if($('.error-message').length == 0)
-          $('.upload-img-button').after('<p class="error-message">' + data.error + '</p>');
-        else $('.error-message').text(data.error);
-      } 
-      else $(location).attr('href', '/');
+  //     if(!data.ok) {
+  //       if($('.error-message').length == 0)
+  //         $('.upload-img-button').after('<p class="error-message">' + data.error + '</p>');
+  //       else $('.error-message').text(data.error);
+  //     } 
+  //     else $(location).attr('href', '/');
       
-    })
-    .fail(err => console.log(err));
-   });
+  //   })
+  //   .fail(err => console.log(err));
+  //  });
    
 });
