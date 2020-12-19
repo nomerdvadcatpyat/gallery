@@ -17,20 +17,28 @@ $(function() {
   $('.upload-image').on('click', function(e) {
     if (!$('.upload-image').hasClass('non-active')) {
       $(document.body).css('overflow','hidden'); 
+      $('.modal-layout').removeClass('hidden');
       $('.upload-image-form').addClass('is-upload-img-open');
     }
   });
 
   // закрытие модалки при клике на на нее
-  $(document).on('click', function(e){
-    // console.log($(e.target).parents())
-    if (!(($(e.target).parents('.upload-image-form').length)
-        || $(e.target).hasClass('upload-image-form')
-        || $(e.target).hasClass('upload-image'))) {
+  // $(document).on('click', function(e){
+  //   // console.log($(e.target).parents())
+  //   if (!(($(e.target).parents('.upload-image-form').length)
+  //       || $(e.target).hasClass('upload-image-form')
+  //       || $(e.target).hasClass('upload-image'))) {
+  //     $('.upload-image-form').removeClass('is-upload-img-open');
+  //     $('.modal-layout').addClass('hidden')
+  //     $(document.body).css('overflow','auto'); 
+	// 	}
+  // });
+
+  $('.modal-layout').on('click', function(e) {
       $('.upload-image-form').removeClass('is-upload-img-open');
+      $('.modal-layout').addClass('hidden')
       $(document.body).css('overflow','auto'); 
-		}
-  });
+  })
   
   // upload
   $('#fileinfo').on('submit', function (e) {

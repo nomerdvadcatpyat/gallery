@@ -64,16 +64,12 @@ router.post('/image', (req, res) => {
           alt: req.body.alt,
           owner: req.session.userLogin })
         .then(data => {
-          // console.log('add image in db', data)
+          res.json({
+            ok: true
+          });
         })
         .catch(err => console.log('err from add image in db', err));
 
-      });
-  
-
-  
-      res.json({
-        ok: true
       });
     }  
   });
