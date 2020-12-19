@@ -12,7 +12,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   display: grid;
   grid-template:  'header' 10vh
-                  'content' 1fr
+                  'main' 1fr
                   / 1fr;
 }
 
@@ -30,10 +30,18 @@ body {
   margin: 0 2%;
 }
 
-/* Content */
 .content {
-  grid-area: content;
+  grid-area: main;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
   background-color: rgb(204, 112, 112);
+}
+
+/* Content */
+.content__columns {
+  /* grid-area: main; */
   padding: 1% 5%;
   display: flex;
   flex-flow: row nowrap;
@@ -97,6 +105,12 @@ body {
   justify-content: center;
   align-items: center;
 
+}
+
+.img-info__text {
+  text-decoration: none;
+  color: white;
+  z-index: 100000;
 }
 
 .hidden {

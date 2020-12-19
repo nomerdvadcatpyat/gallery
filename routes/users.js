@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const api = require('../dbAPI.js');
+const api = require('../utils/dbAPI.js');
  
 /* Создание пользователя */
 router.post('/login', function(req, res, next) {

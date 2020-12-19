@@ -4,9 +4,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const config = require('./config');
+const config = require('./utils/config');
 
-const mongooseConnection = require('./dbAPI').connection;
+const mongooseConnection = require('./utils/dbAPI').connection;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -15,6 +15,7 @@ const registerRouter = require('./routes/register');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 const uploadRouter = require('./routes/upload');
+const accountRouter = require('./routes/account');
 const usersRouter = require('./routes/users');
 
 
@@ -47,6 +48,7 @@ app.use('/register', registerRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/upload', uploadRouter);
+app.use('/account', accountRouter);
 // app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

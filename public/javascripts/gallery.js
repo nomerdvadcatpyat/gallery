@@ -5,14 +5,17 @@ $(function() {
   const showImage = href => $('.full-img-pic-layout').append(`<img class="full-img" src=${href}>`);
 
   $('.full-image-link').on('click', function(e) {
+    if($(e.target).attr('class') === 'img-info__text') return;
     e.preventDefault();
-
+    
     // $('.full-img-pic-layout').append('<img src="/images/site-images/arrow-left.png" class="arrow-left">');
     // $('.full-img-pic-layout').append('<img src="/images/site-images/arrow-right.png" class="arrow-right">');
 
     current = +$(this).attr('id');
     const href = $(this).data('href');
-    lastImageID = +$('.content').data('allCount') - 1;
+    lastImageID = +$('.content__columns').data('allCount') - 1;
+
+    console.log(lastImageID);
     
     $('.full-img-pic-layout').removeClass('hidden');
     $('body').css('overflow','hidden');

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const User = require('./models/user.js');
-const Image = require('./models/image');
+const User = require('../models/user.js');
+const Image = require('../models/image');
 const config = require('./config');
 
 const mongoUri = config.mongoUri;

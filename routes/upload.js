@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const dbapi = require('../dbAPI');
-const config = require('../config');
+const dbapi = require('../utils/dbAPI');
+const config = require('../utils/config');
 const fs = require('fs');
 const gm = require('gm');
 

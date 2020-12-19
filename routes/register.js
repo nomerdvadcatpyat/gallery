@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const api = require('../dbAPI');
+const api = require('../utils/dbAPI');
 
 // router.get('/', function(req, res, next) {
 //   res.render('register');
