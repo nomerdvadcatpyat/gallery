@@ -4,23 +4,26 @@ block content
   main.content
     div.content__column.column-1
       each image in column1
-        section.content__img-container.img-container
-          img.img-container__img(src = image.path, alt = image.alt)
-          section.img-container__info.img-info
-            p.img-info__text #{image.owner}
-            p.img-info__text #{image.alt}
+        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
+          section.content__img-container.img-container
+            img.img-container__img(src = image.minImage, alt = image.alt)
+            section.img-container__info.img-info
+              p.img-info__text #{image.owner}
+              p.img-info__text #{image.alt}
     div.content__column.column-2
       each image in column2
-        section.content__img-container.img-container
-          img.img-container__img(src = image.path, alt = image.alt)
-          section.img-container__info.img-info
-            p.img-info__text #{image.owner}
-            p.img-info__text #{image.alt}
+        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
+          section.content__img-container.img-container
+            img.img-container__img(src = image.minImage, alt = image.alt)
+            section.img-container__info.img-info
+              p.img-info__text #{image.owner}
+              p.img-info__text #{image.alt}
     div.content__column.column-3
       each image in column3
-        section.content__img-container.img-container
-          img.img-container__img(src = image.path, alt = image.alt)
-          section.img-container__info.img-info
-            p.img-info__text #{image.owner}
-            p.img-info__text #{image.alt}
-    
+        a.fancybox(data-fancybox="gallery" href=image.fullImage title=image.alt)
+          section.content__img-container.img-container
+            img.img-container__img(src = image.minImage, alt = image.alt)
+            section.img-container__info.img-info
+              p.img-info__text #{image.owner}
+              p.img-info__text #{image.alt}
+      

@@ -7,7 +7,7 @@ $(function() {
      
     input.on('change', function(element) {
       let fileName = '';
-      console.log(element.target.value);
+      // console.log(element.target.value);
       if (element.target.value) fileName = element.target.value.split('\\').pop();
       fileName ? label.addClass('has-file').find('.file-name').html(fileName) : label.removeClass('has-file').html(labelVal);
     });
@@ -23,7 +23,7 @@ $(function() {
 
   // закрытие модалки при клике на на нее
   $(document).on('click', function(e){
-    console.log($(e.target).parents())
+    // console.log($(e.target).parents())
     if (!(($(e.target).parents('.upload-image-form').length)
         || $(e.target).hasClass('upload-image-form')
         || $(e.target).hasClass('upload-image'))) {
@@ -38,21 +38,26 @@ $(function() {
 
     const formData = new FormData(this);
     formData.set('alt', $('.img-description').val())
-    console.log(formData);
+    // console.log(formData);
     $.ajax({
       type: 'POST',
       url: '/upload/image',
       data: formData,
       processData: false,
       contentType: false,
-      success: r => console.log(r),
-      error: r => console.log(r)
     })
     .done(data => {
-      if(data.ok) {
-        $(location).attr('href', '/');
-      }
-    });
+      console.log(data);
+
+      if(!data.ok) {
+        if($('.error-message').length == 0)
+          $('.upload-img-button').after('<p class="error-message">' + data.error + '</p>');
+        else $('.error-message').text(data.error);
+      } 
+      else $(location).attr('href', '/');
+      
+    })
+    .fail(err => console.log(err));
    });
    
 });

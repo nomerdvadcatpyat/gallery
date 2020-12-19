@@ -3,12 +3,15 @@ const router = express.Router();
 const path = require('path');
 const dbapi = require('../dbAPI');
 const config = require('../config');
+const fs = require('fs');
+const gm = require('gm');
 
-const multer = require('multer'); // модуль для обработки файлов
+const multer = require('multer'); // модуль для сохранения картинок
+const { stdout } = require('process');
 
 const storage = multer.diskStorage({
-  destination: (req, file, cd) => {
-    cd(null, path.join(config.STATIC_DESTINATION, config.IMAGES_DESTINATION));
+  destination: (req, file, cb) => {
+    cb(null, path.join(config.STATIC_DESTINATION, config.FULL_IMAGES_DESTINATION));
   },
   filename: (req, file, cb) => {
     console.log(file);
@@ -32,33 +35,48 @@ const upload = multer({
 
 router.post('/image', (req, res) => {
   upload(req, res, err => {
-    let error = '';
     if(err) {
-      if(err.code === 'LIMIT_FILE_SIZE') {
-        error = "Картинка не более 5mb"
-      }
-      if(err.code === 'EXTENTION') {
-        error = 'Только jpeg и png'
-      }
+      let error = '';
+      if(err.code === 'LIMIT_FILE_SIZE') 
+        error = "Картинка не более 5mb";
+      if(err.code === 'EXTENTION') 
+        error = 'Только jpeg и png';
+      console.log(error);
+      res.json({
+        ok: false,
+        error
+      });
     }
-    console.log('body1 ', req.body);
-    console.log(req.file);
-    console.log(req.session)
-    console.log(error);
+    else {
+      console.log('body1 ', req.body);
+      console.log(req.file);
+      console.log(req.session)
 
-    dbapi.uploadImage({ path: path.join(`/${config.IMAGES_DESTINATION}`, req.file.filename), alt: req.body.alt, owner: req.session.userLogin })
-    .then(data => {
-      console.log('add image in db', data)
-    })
-    .catch(err => console.log('err from add image in db', err));
+      gm(req.file.path)
+      .resize(600)
+      .write(path.join(req.file.destination, config.MIN_IMAGES_DESTINATION, req.file.filename), function(err, stdout) {
+        if(err) console.log('image err', err);
+        console.log('image std', stdout);
 
-    res.json({
-      ok: !error,
-      error
-    })
+        dbapi.uploadImage({ 
+          fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, req.file.filename), // В базу записываем относительно /public (статик директория для express)
+          minImage: path.join(`/${config.FULL_IMAGES_DESTINATION + '/' + config.MIN_IMAGES_DESTINATION}`, req.file.filename),  
+          alt: req.body.alt,
+          owner: req.session.userLogin })
+        .then(data => {
+          // console.log('add image in db', data)
+        })
+        .catch(err => console.log('err from add image in db', err));
+
+      });
+  
+
+  
+      res.json({
+        ok: true
+      });
+    }  
   });
-
-  console.log('body2 ', req.body);
 });
 
 module.exports = router;
