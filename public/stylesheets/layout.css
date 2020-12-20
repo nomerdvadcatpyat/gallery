@@ -1,0 +1,522 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+* {
+	box-sizing: border-box;
+}
+
+
+html, body {
+  min-height: 100%;
+  background-color: #1b252f;
+}
+
+@media screen and (max-width: 700px) {
+  body {
+    grid-template:  'header' min-content
+                    'main' 1fr
+                    / 1fr;
+  }
+
+  .header, .header__first-two-buttons, .header__second-two-buttons {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header__button {
+    margin: 10px 0;
+  }
+
+  .content__columns {
+    flex-flow: column nowrap;
+  }
+
+  .content__column {
+    max-width: 100%;
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+
+  .account-content {
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .full-img-pic-layout__arrow-left, .full-img-pic-layout__arrow-right {
+    height: 50px;
+    /* width: 10px; */
+  }
+}
+
+
+@media screen and (min-width: 700px) {
+  body {
+    position: relative;
+    margin: 0;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    display: grid;
+    grid-template:  'header' min-content
+                    'main' 20fr
+                    / 1fr;
+  }
+
+  .header {
+    margin: 20px 0;
+    grid-area: header;
+    display: grid;
+    grid-template: 'buttons12 search buttons34' 1fr
+                    /max-content 1fr max-content;
+  }
+  
+  .header__first-two-buttons {
+    grid-area: buttons12;
+    justify-content: start;
+  }
+  
+  .header__second-two-buttons {
+    grid-area: buttons34;
+    justify-content: end;
+  }
+  
+  .header__first-two-buttons, .header__second-two-buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+  }
+
+  .header__button {
+    margin: 10px;
+  }
+
+  .content__columns {
+    /* grid-area: main; */
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+  }
+  
+  .content__column {
+    max-width: 33%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+  }
+  
+  .account-content {
+    font-size: 30px;
+  }
+
+  .full-img-pic-layout__arrow-left, .full-img-pic-layout__arrow-right {
+    height: 100px;
+    /* width: 10px; */
+  }
+}
+
+
+
+/* СТИЛИ КНОПОК */
+
+.header__button {
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+	text-transform: uppercase;
+  color: #FFFFFF;
+  background-color: transparent;
+  border: 0px;
+}
+
+
+.modal-button {
+	border-radius: 20px;
+	border: 1px solid #FF4B2B;
+	background-color: #FF4B2B;
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 12px 45px;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+  transition: transform 80ms ease-in;
+  margin: 0 10px;
+}
+
+.modal-button:active {
+	transform: scale(0.95);
+}
+
+.modal-button:focus {
+	outline: none;
+}
+
+.header__button:hover, .modal-button:hover {
+  cursor: pointer;
+}
+
+.overlay__switch-button {
+	background-color: transparent;
+	border-color: #FFFFFF;
+}
+
+
+
+/* СТИЛИ МОДАЛКИ РЕГИСТРАЦИИ И АВТОРИЗАЦИИ */
+
+.sign-up-inner-container__form, .sign-in-inner-container__form {
+	background-color: #FFFFFF;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: 0 50px;
+	height: 100%;
+	text-align: center;
+}
+
+.sign-in-container__input {
+	background-color: #eee;
+	border: none;
+	padding: 12px 15px;
+	margin: 8px 0;
+	width: 100%;
+}
+
+.sign-in-container, .upload-image-form {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 1000;
+  display: block;
+	background-color: #fff;
+	border-radius: 10px;
+  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+			0 10px 10px rgba(0,0,0,0.22);
+	/* position: relative; */
+	overflow: hidden;
+	width: 768px;
+	max-width: 100%;
+	min-height: 480px;
+}
+
+.sign-up-inner-container, .sign-in-inner-container {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	transition: all 0.6s ease-in-out;
+}
+
+.sign-in-inner-container {
+	left: 0;
+	width: 50%;
+	z-index: 2;
+}
+
+.sign-in-container.right-panel-active .sign-in-inner-container {
+	transform: translateX(100%);
+}
+
+.sign-up-inner-container {
+	left: 0;
+	width: 50%;
+	opacity: 0;
+	z-index: 1;
+}
+
+.sign-in-container.right-panel-active .sign-up-inner-container {
+	transform: translateX(100%);
+	opacity: 1;
+	z-index: 5;
+	animation: show 0.6s;
+}
+
+@keyframes show {
+	0%, 49.99% {
+		opacity: 0;
+		z-index: 1;
+	}
+	
+	50%, 100% {
+		opacity: 1;
+		z-index: 5;
+	}
+}
+
+.sign-in-container__overlay {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	width: 50%;
+	height: 100%;
+	overflow: hidden;
+	transition: transform 0.6s ease-in-out;
+	z-index: 100;
+}
+
+.sign-in-container.right-panel-active .sign-in-container__overlay {
+	transform: translateX(-100%);
+}
+
+.overlay {
+	background: #FF416C;
+	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
+	background: linear-gradient(to right, #FF4B2B, #FF416C);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: 0 0;
+	color: #FFFFFF;
+	position: relative;
+	left: -100%;
+	height: 100%;
+	width: 200%;
+  	transform: translateX(0);
+	transition: transform 0.6s ease-in-out;
+}
+
+.sign-in-container.right-panel-active .overlay {
+  	transform: translateX(50%);
+}
+
+.overlay-panel__overlay-right, .overlay-panel__overlay-left {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	padding: 0 40px;
+	text-align: center;
+	top: 0;
+	height: 100%;
+	width: 50%;
+	transform: translateX(0);
+	transition: transform 0.6s ease-in-out;
+}
+
+.overlay-panel__overlay-left {
+	transform: translateX(-20%);
+}
+
+.sign-in-container.right-panel-active .overlay-panel__overlay-left {
+	transform: translateX(0);
+}
+
+.overlay-panel__overlay-right {
+	right: 0;
+	transform: translateX(0);
+}
+
+.sign-in-container.right-panel-active .overlay-panel__overlay-right {
+	transform: translateX(20%);
+}
+
+.error-message, .success {
+  position: absolute;
+  bottom: 10%;
+}
+
+.error-message {
+  color: #D8000C;
+}
+
+.success {
+  color: rgb(42, 192, 42);
+}
+
+.error-field {
+  background-color: #FFD2D2;
+} 
+
+.modal-layout {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.header__sign-in-open-button {
+  margin: 0 2%;
+}
+
+
+
+/* СТИЛИ МОДАЛКИ ЗАГРУЗКИ КАРТИНКИ */
+
+.upload-image-form {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-image-form__input-img-label{
+  text-align: center;
+  color:rgb(48, 44, 44);
+  padding:0;
+  line-height:40px;
+  width:300px;
+  display:block;
+  border:2px solid rgb(0, 0, 0)
+}
+
+.upload-image-form__input-img-label:hover, .upload-image-form__input-img-label:focus{
+  color:rgb(0, 0, 0);
+  border-color:rgb(0, 0, 0);
+}
+
+.upload-image-form__input-img{
+  width:.1px;
+  height:.1px;
+  opacity:0;
+  overflow:hidden;
+  position:absolute;
+  z-index:-1
+}
+
+.upload-image-form__input-img + .upload-image-form__input-img-label{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:0 10px;
+  cursor:pointer;
+}
+
+.upload-image-form__input-img + .upload-image-form__input-img-label .icon:before{
+  content:"\f093"
+}
+
+.upload-image-form__input-img + .upload-image-form__input-img-label.has-file .icon:before{
+  content:"\f00c";
+  color:#5AAC7B
+}
+
+.upload-image-form__img-description {
+  width: 60%;
+  border: none;
+  border-bottom: 1px solid black;
+  font-size: 30px;
+  margin: 10% 0;
+  text-align: center;
+}
+
+
+/* main content - КОЛОНКИ */
+
+/* Content */
+
+.content {
+  grid-area: main;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-container {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 2%; 
+}
+
+.img-container:hover {
+  cursor: pointer; 
+}
+
+.img-container__img {
+  width: 100%;
+}
+
+.img-container__info {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  transition: 0.4s;
+
+  font-size: larger;
+  font-weight: bolder;
+}
+
+.img-container:hover .img-container__info{
+  display: flex;
+  opacity: 1;
+}
+
+.full-img-pic-layout {
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-info__text {
+  text-decoration: none;
+  color: white;
+  z-index: 100000;
+}
+
+
+.full-img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+
+/* СТРЕЛОЧКИ У МОДАЛКИ ПОЛНОЙ КАРТИНКИ */
+
+.full-img-pic-layout__arrow-right, .full-img-pic-layout__arrow-left {
+  position: fixed;
+  z-index: 100;
+}
+
+.full-img-pic-layout__arrow-right:hover, .full-img-pic-layout__arrow-left:hover {
+  cursor: pointer;
+}
+
+.full-img-pic-layout__arrow-right {
+  right: 20px;
+}
+
+.full-img-pic-layout__arrow-left {
+  left: 20px;
+}
+
+
+
+/* СОСТОЯНИЕ */
+
+.hidden {
+  display: none;
+}
+
+
+/* СТРАНИЦА АККАУНТА */
+
+.account-content {
+  color: white;
+}
+
+

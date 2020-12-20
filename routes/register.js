@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const api = require('../utils/dbAPI');
 
-// router.get('/', function(req, res, next) {
-//   res.render('register');
-// });
 
 router.post('/', function(req, res, next) {
   const login = req.body.login;
@@ -13,12 +10,10 @@ router.post('/', function(req, res, next) {
   console.log(req.body);
 
   const error = findErrorInFields(login, pass, rePass);
-  console.log('Ошибка валдидации ', error);
   if(error) res.json(error); 
   else {
     api.getUser({ login: login})
     .then(user => {
-      console.log('USER', user)
       if(!user) {
         api.createUser({
           login: login,
@@ -33,7 +28,6 @@ router.post('/', function(req, res, next) {
         .catch(err => res.json(err));
       }
       else {
-        console.log('Пользователь уже существует')
         res.json({
           ok: false,
           error: 'Пользователь с таким логином уже существует',

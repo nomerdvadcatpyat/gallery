@@ -1,43 +1,31 @@
 $(function() {
 // смена иконки на кнопке загрузки картинки
-  $('.input-img').each(function() {
+  $('.upload-image-form__input-img').each(function() {
     const input = $(this),
-        label = input.next('.upload-image-label'),
+        label = input.next('.upload-image-form__input-img-label'),
         labelVal = label.html();
      
     input.on('change', function(element) {
       let fileName = '';
       // console.log(element.target.value);
       if (element.target.value) fileName = element.target.value.split('\\').pop();
-      fileName ? label.addClass('has-file').find('.file-name').html(fileName) : label.removeClass('has-file').html(labelVal);
+      fileName ? label.addClass('has-file').find('.upload-image-form__file-name').html(fileName) : label.removeClass('has-file').html(labelVal);
     });
   });
 
   // открытие модалки загрузки картинки
-  $('.upload-image').on('click', function(e) {
-    if (!$('.upload-image').hasClass('non-active')) {
-      $(document.body).css('overflow','hidden'); 
+  $('.header__upload-image-button').on('click', function(e) {
+    if (!$('.header__upload-image-button').hasClass('non-active')) {
+      // $(document.body).css('overflow','hidden'); 
       $('.modal-layout').removeClass('hidden');
-      $('.upload-image-form').addClass('is-upload-img-open');
+      $('.upload-image-form').removeClass('hidden');
     }
   });
 
-  // закрытие модалки при клике на на нее
-  // $(document).on('click', function(e){
-  //   // console.log($(e.target).parents())
-  //   if (!(($(e.target).parents('.upload-image-form').length)
-  //       || $(e.target).hasClass('upload-image-form')
-  //       || $(e.target).hasClass('upload-image'))) {
-  //     $('.upload-image-form').removeClass('is-upload-img-open');
-  //     $('.modal-layout').addClass('hidden')
-  //     $(document.body).css('overflow','auto'); 
-	// 	}
-  // });
-
   $('.modal-layout').on('click', function(e) {
-      $('.upload-image-form').removeClass('is-upload-img-open');
+      $('.upload-image-form').addClass('hidden');
       $('.modal-layout').addClass('hidden')
-      $(document.body).css('overflow','auto'); 
+      // $(document.body).css('overflow','auto'); 
   })
   
   // upload
@@ -45,7 +33,7 @@ $(function() {
     e.preventDefault();
 
     const formData = new FormData(this);
-    formData.set('alt', $('.img-description').val())
+    formData.set('alt', $('.upload-image-form__img-description').val())
     // console.log(formData);
     $.ajax({
       type: 'POST',
@@ -59,7 +47,7 @@ $(function() {
 
       if(!data.ok) {
         if($('.error-message').length == 0)
-          $('.upload-img-button').after('<p class="error-message">' + data.error + '</p>');
+          $('.upload-image-form__upload-img-button').after('<p class="error-message">' + data.error + '</p>');
         else $('.error-message').text(data.error);
       } 
       else $(location).attr('href', '/');

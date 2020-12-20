@@ -24,7 +24,7 @@ $(function() {
           data.fields.forEach(item => { $(`.${item}`).addClass('error-field') })
       }
       else {
-        $('.sign-in-inner-container__submit').after('<p class="success"> Сацес </p>');
+        $('.sign-in-inner-container__submit').after('<p class="success"> Success </p>');
         $(location).attr('href', '/');
       }
     })

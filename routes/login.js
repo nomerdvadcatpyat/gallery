@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const api = require('../utils/dbAPI');
-const { use } = require('./register');
+const dbapi = require('../utils/dbApi');
 
 router.post('/', function(req, res, next) {
   const login = req.body.login;
@@ -18,13 +17,13 @@ router.post('/', function(req, res, next) {
       fields: errFields 
     });
   } else {
-    api.checkUser({ login: login, password: pass})
+    dbapi.checkUser({ login: login, password: pass})
     .then(user => {
       if(!user) {
         res.json({
           ok: false,
           error: 'Ошибка в логине или пароле.',
-          fields: ['login', 'password']
+          fields: ['sign-in-login', 'sign-in-pass']
         });
       } 
       else {

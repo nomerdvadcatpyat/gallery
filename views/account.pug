@@ -1,9 +1,5 @@
-extends index
+extends columns
 
 block user-content
   .account-content
-    p.account__login #{userLogin}
-    //- block user-pics
-    //- .account__uploaded-pics
-    //-   each pic in uploadedPics
-    //-     img.user-pic(src=pic.minImage)
+    p.account__login Профиль пользователя #{galleryOwner}

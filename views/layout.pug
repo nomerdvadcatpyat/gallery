@@ -3,64 +3,65 @@ html(lang="en")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="/stylesheets/index.css")
-    link(rel="stylesheet" href="/stylesheets/register.css")
-    link(rel="stylesheet" href="/stylesheets/upload-image.css")
-    link(rel="stylesheet", href="/stylesheets/account.css")
+    link(rel="stylesheet" href="/stylesheets/layout.css")
     link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css")
     script(src="https://code.jquery.com/jquery-3.5.1.min.js")
     title Gallery
   body
     header.header
       .full-img-pic-layout.hidden
-        img.arrow-right(src="/images/site-images/arrow-right.png")
-        img.arrow-left(src="/images/site-images/arrow-left.png")
-      .modal-layout.hidden
-      a.form-button.index-link(href="/") На главную
-      if(userLogin)
-        button.form-button.upload-image Загрузить Картинку
-        a.form-button.account-link(href="/account/" + userLogin) #{userLogin} 
-        a.form-button(href="/logout") Выход
-      else
-        button.form-button.upload-image.non-active Загрузить Картинку
-        button.modal-open.form-button Вход/Регистрация
+        img.full-img-pic-layout__arrow-right(src="/images/site-images/arrow-right.png")
+        img.full-img-pic-layout__arrow-left(src="/images/site-images/arrow-left.png")
 
+      .header__first-two-buttons
+        a.header__button.header__index-link(href="/") На главную
+        if(userLogin)
+          a.header__button.header__account-link(href="/account/" + userLogin) #{userLogin} 
+      if(userLogin)
+        .header__second-two-buttons
+          button.header__button.header__upload-image-button Загрузить Картинку
+          a.header__button(href="/logout") Выход
+      else
+        .header__second-two-buttons
+          button.header__sign-in-open-button.header__button Вход/Регистрация
+
+    .modal-layout.hidden
     //- Модальное окно входа/регистрации  
-    .sign-in-container
-      .sign-in-container__form.sign-up-inner-container
-        form.sign-in-form(action="#")
-          h1.sign-in-container__title Регистрация
+    .sign-in-container.hidden
+      .sign-up-inner-container
+        form.sign-up-inner-container__form(action="#")
+          h1.sign-up-inner-container__title Регистрация
           input.login.sign-in-container__input(type="text" placeholder="Логин")
           input.pass.sign-in-container__input(type="password" placeholder="Пароль")
           input.rePass.sign-in-container__input(type="password" placeholder="Повторите пароль")
-          button.sign-up-inner-container__submit.form-button Зарегистрироваться
-      .sign-in-container__form.sign-in-inner-container
-        form.sign-in-form(action="#")
-          h1.sign-in-container__title Вход
+          button.sign-up-inner-container__submit.modal-button Зарегистрироваться
+      .sign-in-inner-container
+        form.sign-in-inner-container__form(action="#")
+          h1.sign-in-inner-container__title Вход
           input.sign-in-login.sign-in-container__input(type="text" placeholder="Логин")
           input.sign-in-pass.sign-in-container__input(type="password" placeholder="Пароль")
-          button.sign-in-inner-container__submit.form-button Войти
+          button.sign-in-inner-container__submit.modal-button Войти
+
       .sign-in-container__overlay
         .overlay
-          .overlay-panel.overlay-right
-            h1.sign-in-container__title Добро пожаловать. Снова.
-            p.sign-in-container__text Еще нет аккаунта?
-            button#signUp-switch.form-button.switch-button Зарегистрироваться
-          .overlay-panel.overlay-left
-            h1.sign-in-container__title Добро пожаловать!
-            p.sign-in-container__text Уже имеете аккаунт?
-            button#signIn-switch.form-button.switch-button Войти
+          .overlay-panel__overlay-right
+            h1.overlay__title Добро пожаловать. Снова.
+            p.overlay__text Еще нет аккаунта?
+            button#signUp-switch.modal-button.overlay__switch-button Зарегистрироваться
+          .overlay-panel__overlay-left
+            h1.overlay__title Добро пожаловать!
+            p.overlay__text Уже имеете аккаунт?
+            button#signIn-switch.modal-button.overlay__switch-button Войти
 
       //- Модальное окно загрузки картинки
-    form.upload-image-form(method="POST" enctype="multipart/form-data" name="fileinfo" id="fileinfo")
-      input#file.input-img(type="file" name="file" accept="image/jpeg,image/png")
-      label.upload-image-label(for="file")
+    form.upload-image-form.hidden(method="POST" enctype="multipart/form-data" name="fileinfo" id="fileinfo")
+      input#file.upload-image-form__input-img(type="file" name="file" accept="image/jpeg,image/png")
+      label.upload-image-form__input-img-label(for="file")
         i.icon.fa.fa-check
-        span.file-name Загрузить картинку
-      input.img-description(type="text" placeholder="Краткое описание картинки")
-      button.form-button.upload-img-button Отправить
+        span.upload-image-form__file-name Загрузить картинку
+      input.upload-image-form__img-description(type="text" placeholder="Краткое описание картинки")
+      button.upload-image-form__upload-img-button.modal-button Отправить
     block content
-
 
   script(src="/javascripts/register.js")
   script(src="/javascripts/login.js")

@@ -4,46 +4,50 @@ let lastImageID;
 $(function() {
   const showImage = href => $('.full-img-pic-layout').append(`<img class="full-img" src=${href}>`);
 
-  $('.full-image-link').on('click', function(e) {
+  $('.img-container').on('click', function(e) {
     if($(e.target).attr('class') === 'img-info__text') return;
     e.preventDefault();
-    
-    // $('.full-img-pic-layout').append('<img src="/images/site-images/arrow-left.png" class="arrow-left">');
-    // $('.full-img-pic-layout').append('<img src="/images/site-images/arrow-right.png" class="arrow-right">');
 
     current = +$(this).attr('id');
     const href = $(this).data('href');
     lastImageID = +$('.content__columns').data('allCount') - 1;
 
-    console.log(lastImageID);
-    
-    $('.full-img-pic-layout').removeClass('hidden');
-    $('body').css('overflow','hidden');
-
+    openFullImageGallery();
     showImage(href);
   })
 
   $('.full-img-pic-layout').on('click', function (e) {
     console.log(e.target)
     const targetClass = $(e.target).attr('class');
-    if(targetClass !== 'arrow-left' && targetClass !== 'arrow-right' && targetClass !== 'full-img') {
-      console.log(targetClass);
+    if(targetClass !== 'full-img-pic-layout__arrow-left' && targetClass !== 'full-img-pic-layout__arrow-right' && targetClass !== 'full-img') {
       console.log($(e.target).attr('class'));
-      $('.full-img').remove();
-      $('.full-img-pic-layout').addClass('hidden');
-      $('body').css('overflow','auto');
+      closeFullImageGallery();
     }
   })
 
-  $('.arrow-right').on('click', (e) => nextImage());
-  $('.arrow-left').on('click', (e) => previousImage());
+  $('.full-img-pic-layout__arrow-right').on('click', (e) => nextImage());
+  $('.full-img-pic-layout__arrow-left').on('click', (e) => previousImage());
 
   $(document).on('keydown', (e) => {
+    console.log(e.code);
     if($('.full-img')) {
       if(e.code === "ArrowRight") nextImage();
       else if (e.code === "ArrowLeft") previousImage();
+      else if (e.code === "Escape") closeFullImageGallery();
     }
   })
+
+  const openFullImageGallery = () => {
+    $('.full-img-pic-layout').removeClass('hidden');
+    $('body').css('overflow','hidden');
+
+  }
+  
+  const closeFullImageGallery = () => {
+    $('.full-img').remove();
+    $('.full-img-pic-layout').addClass('hidden');
+    $('body').css('overflow','auto');
+  }
 
   const nextImage = () => {
     $('.full-img').remove();

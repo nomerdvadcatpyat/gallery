@@ -7,7 +7,7 @@ block content
     .content__columns(data-all-count = count, data-col-1-length = col1Length, data-col-2-length = col2Length, data-col-3-length = col3Length)
       .content__column.column-1
         each image, index in column1
-          section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 1, data-col-position=index)
+          section.img-container(id= i, data-href= image.fullImage, data-column = 1, data-col-position=index, tabindex=0)
             img.img-container__img(src = image.minImage, alt = image.alt)
             section.img-container__info.img-info
               a.img-info__text(href="/account/" + image.owner) #{image.owner}
@@ -15,7 +15,7 @@ block content
           - i++;
       div.content__column.column-2
         each image, index in column2
-          section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 2, data-col-position=index)
+          section.img-container(id= i, data-href= image.fullImage, data-column = 2, data-col-position=index, tabindex=0)
             img.img-container__img(id = i, src = image.minImage, alt = image.alt)
             section.img-container__info.img-info
               a.img-info__text(href="/account/" + image.owner) #{image.owner}
@@ -23,7 +23,7 @@ block content
             - i++;
       div.content__column.column-3
         each image, index in column3
-          section.content__img-container.img-container.full-image-link(id= i, data-href= image.fullImage, data-column = 3, data-col-position=index)
+          section.img-container(id= i, data-href= image.fullImage, data-column = 3, data-col-position=index, tabindex=0)
             img.img-container__img(id = i, src = image.minImage, alt = image.alt)
             section.img-container__info.img-info
               a.img-info__text(href="/account/" + image.owner) #{image.owner}

@@ -3,28 +3,17 @@ $(function() {
   $('#signUp-switch').on('click', () => $('.sign-in-container').addClass("right-panel-active"));
   $('#signIn-switch').on('click', () => $('.sign-in-container').removeClass("right-panel-active"));
 
-  $(".modal-open").on('click', function(e){
+  $(".header__sign-in-open-button").on('click', function(e){
     console.log(e);
-    $(document.body).css('overflow', 'hidden');
+    // $(document.body).css('overflow', 'hidden');
     $('.modal-layout').removeClass('hidden');
-		$('.sign-in-container').addClass('is-open');
+		$('.sign-in-container').removeClass('hidden');
   });
-
-  // $(document).on('click', function(e){
-	// 	if (!(
-	// 	($(e.target).parents('.sign-in-container').length) // (не) если мы кликнули точно по модалке
-	// 	||	($(e.target).hasClass('sign-in-container')) // и если мы кликаем не на форму
-	// 	||	($(e.target).hasClass('modal-open'))) // и если мы кликаем не на кнопку открытия формы
-	// 	) {
-  //     $('.sign-in-container').removeClass('is-open');
-  //     // $(document.body).css('overflow', 'auto');
-	// 	}
-  // });
   
   $('.modal-layout').on('click', function(e) {
-    $('.sign-in-container').removeClass('is-open');
+    $('.sign-in-container').addClass('hidden');
     $('.modal-layout').addClass('hidden')
-    $(document.body).css('overflow','auto'); 
+    // $(document.body).css('overflow','auto'); 
 })
 
   // Отправка данных с формы по нажатию на submit
