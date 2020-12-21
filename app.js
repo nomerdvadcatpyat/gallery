@@ -4,9 +4,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-const config = require('./utils/config');
+const config = require('./config');
 
-const mongooseConnection = require('./utils/dbAPI').connection;
+const mongooseConnection = require('./utils/dbAPI.js').connection;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -63,5 +63,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+app.listen(config.PORT, () =>
+  console.log(`Example app listening on port ${config.PORT}!`)
+);
 
 module.exports = app;

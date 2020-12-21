@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dbapi = require('../utils/dbAPI');
+const dbapi = require('../utils/dbAPI.js');
 const ColumnsGenerator = require('../utils/columnsGenerator');
 
 router.get('/:login', (req, res) => {

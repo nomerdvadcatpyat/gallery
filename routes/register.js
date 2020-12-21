@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const api = require('../utils/dbAPI');
+const api = require('../utils/dbAPI.js');
 
 
 router.post('/', function(req, res, next) {

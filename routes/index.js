@@ -3,10 +3,6 @@ var router = express.Router();
 const dbapi = require('../utils/dbAPI.js');
 const ColumnsGenerator = require('../utils/columnsGenerator'); 
 
-const sizeOf = require('image-size');
-const path = require('path');
-const config = require('../utils/config');
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
 

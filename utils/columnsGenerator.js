@@ -1,6 +1,6 @@
 const sizeOf = require('image-size');
 const path = require('path');
-const config = require('../utils/config');
+const config = require('../config');
 
 
 class ColumnsGenerator {

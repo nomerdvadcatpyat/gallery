@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const dbapi = require('../utils/dbApi');
+const dbapi = require('../utils/dbAPI.js');
 
 router.post('/', function(req, res, next) {
   const login = req.body.login;
