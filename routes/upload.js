@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(config.STATIC_DESTINATION, config.FULL_IMAGES_DESTINATION));
   },
   filename: (req, file, cb) => {
-    console.log('file', file);
+    console.log(file);
     cb(null, Date.now() + path.extname(file.originalname))
   }
 });
@@ -20,7 +20,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
+    const ext = path.extname(file.originalname).toLocaleLowerCase();
     if(ext !== '.jpg' && ext !== '.jpeg' && ext !== '.png') {
       const err = new Error('Extention');
       err.code = "EXTENTION"
@@ -42,18 +42,18 @@ router.post('/image', (req, res) => {
       res.json({ ok: false, error });
     }
     else { // сжимаем картинку и затем пишем данные в бд
+      console.log( config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename);
       gm(req.file.path)
       .resize(600)
       .write(path.join(config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename), function(err, stdout) {
         if(err) console.log('image err', err);
-        console.log('resized path', path.join(config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename));
+
         dbapi.uploadImage({ 
           fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, req.file.filename), // В базу записываем относительно /public (статик директория для express)
           minImage: path.join(`/${config.MIN_IMAGES_DESTINATION}`, req.file.filename),  
           alt: req.body.alt,
           owner: req.session.userLogin })
         .then(data => {
-          console.log('save pic in db', data);
           res.json({
             ok: true
           });

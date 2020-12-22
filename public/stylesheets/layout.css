@@ -45,7 +45,22 @@ html, body {
 
   .full-img-pic-layout__arrow-left, .full-img-pic-layout__arrow-right {
     height: 50px;
-    /* width: 10px; */
+  }
+  
+  .sign-in-container {
+    font-size: 12px;
+  }
+
+  .sign-up-inner-container__form, .sign-in-inner-container__form {
+    padding: 0 10px;
+  }
+
+  .modal-button {
+    padding: 10px 5px;
+  }
+  
+  .overlay-panel__overlay-right {
+    align-items: center;
   }
 }
 
@@ -111,6 +126,19 @@ html, body {
     height: 100px;
     /* width: 10px; */
   }
+
+  .sign-up-inner-container__form, .sign-in-inner-container__form {
+    padding: 0 50px;
+    align-items: center;
+  }
+
+  .modal-button {
+    padding: 12px 45px;
+  }
+  
+  .overlay-panel__overlay-right, .overlay-panel__overlay-left {
+    align-items: center;
+  }
 }
 
 
@@ -135,7 +163,6 @@ html, body {
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
-	padding: 12px 45px;
 	letter-spacing: 1px;
 	text-transform: uppercase;
   transition: transform 80ms ease-in;
@@ -166,10 +193,8 @@ html, body {
 .sign-up-inner-container__form, .sign-in-inner-container__form {
 	background-color: #FFFFFF;
 	display: flex;
-	align-items: center;
-	justify-content: center;
+  justify-content: center;
 	flex-direction: column;
-	padding: 0 50px;
 	height: 100%;
 	text-align: center;
 }
@@ -281,7 +306,6 @@ html, body {
 .overlay-panel__overlay-right, .overlay-panel__overlay-left {
 	position: absolute;
 	display: flex;
-	align-items: center;
 	justify-content: center;
 	flex-direction: column;
 	padding: 0 40px;

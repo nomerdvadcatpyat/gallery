@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const config = require('./config');
+// const ngrok = require('ngrok');
 
 const mongooseConnection = require('./utils/dbAPI.js').connection;
 const session = require('express-session');
@@ -67,5 +68,14 @@ app.use(function(err, req, res, next) {
 app.listen(config.PORT, () =>
   console.log(`Example app listening on port ${config.PORT}!`)
 );
+
+
+// ngrok.connect({
+//   proto: 'http',
+//   addr: '3000'
+// })
+// .then(data => console.log(data))
+// .catch(err => console.log(err));
+
 
 module.exports = app;
