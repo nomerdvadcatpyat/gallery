@@ -11,12 +11,17 @@ exports.connection = mongoose.connection;
 this.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Image API
-exports.getImages = function(condition) {
-    return new Promise((resolve, reject) => 
-      Image.find(condition, function(err, data) {
+exports.getImages = function(condition, limitCount, skipCount) {
+   return new Promise( (resolve, reject) => { 
+     Image
+    .find(condition)
+    .skip(skipCount)
+    .limit(limitCount)
+    .exec((err, data) => {
       if(err) reject(err);
-      resolve(data);
-    }));
+      else resolve(data);
+    });
+  });
 }
 
 exports.uploadImage = function ({ fullImage, minImage, alt, owner }) {

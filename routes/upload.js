@@ -43,6 +43,7 @@ router.post('/image', (req, res) => {
     }
     else { // сжимаем картинку и затем пишем данные в бд
       console.log( config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename);
+      console.log(req.file)
       gm(req.file.path)
       .resize(600)
       .write(path.join(config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename), function(err, stdout) {

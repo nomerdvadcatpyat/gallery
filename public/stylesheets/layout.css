@@ -496,10 +496,13 @@ html, body {
   align-items: center;
 }
 
-.img-info__text {
-  text-decoration: none;
+.img-info__text, .img-info__link {
   color: white;
   z-index: 100000;
+}
+
+.img-info__link {
+  text-decoration: none;
 }
 
 
