@@ -24,9 +24,9 @@ exports.getImages = function(condition, limitCount, skipCount) {
   });
 }
 
-exports.uploadImage = function ({ fullImage, minImage, alt, owner }) {
+exports.uploadImage = function ({ fullImage, minImage, minImageHeight, alt, owner }) {
   return new Promise((resolve, reject) => {
-    Image.create({ fullImage, minImage, alt, owner }, function(err, data) {
+    Image.create({ fullImage, minImage, minImageHeight, alt, owner }, function(err, data) {
       console.log('create data', data);
       if(err) {
         console.log(err);

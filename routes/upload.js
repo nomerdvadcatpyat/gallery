@@ -5,6 +5,7 @@ const dbapi = require('../utils/dbAPI.js');
 const config = require('../config');
 const gm = require('gm');
 const multer = require('multer'); // модуль для сохранения картинок
+const sizeOf = require('image-size');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -52,6 +53,7 @@ router.post('/image', (req, res) => {
         dbapi.uploadImage({ 
           fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, req.file.filename), // В базу записываем относительно /public (статик директория для express)
           minImage: path.join(`/${config.MIN_IMAGES_DESTINATION}`, req.file.filename),  
+          minImageHeight: sizeOf(path.join(__dirname, '..' , config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION, req.file.filename)).height,
           alt: req.body.alt,
           owner: req.session.userLogin })
         .then(data => {

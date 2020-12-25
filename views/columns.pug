@@ -2,28 +2,10 @@ extends layout
 
 block content
   main.content
-    block user-content
-    .content__columns(data-all-count = count, data-col-1-length = col1Length, data-col-1-height = col1Height,
-                                              data-col-2-length = col2Length, data-col-2-height = col2Height,
-                                              data-col-3-length = col3Length, data-col-3-height = col3Height)
+    block user-info
+    .content__columns
       .content__column.column-1
-        each image in column1
-          section.img-container(data-href= image.fullImage, data-column = 1, data-col-position=image.posInColumn, tabindex=0)
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              a.img-info__link(href="/account/" + image.owner) #{image.owner}
-              p.img-info__text #{image.alt}
-      div.content__column.column-2
-        each image in column2
-          section.img-container(data-href= image.fullImage, data-column = 2, data-col-position=image.posInColumn, tabindex=0)
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              a.img-info__link(href="/account/" + image.owner) #{image.owner}
-              p.img-info__text #{image.alt}
-      div.content__column.column-3
-        each image in column3
-          section.img-container(data-href= image.fullImage, data-column = 3, data-col-position=image.posInColumn, tabindex=0)
-            img.img-container__img(src = image.minImage, alt = image.alt)
-            section.img-container__info.img-info
-              a.img-info__link(href="/account/" + image.owner) #{image.owner}
-              p.img-info__text #{image.alt}
+      .content__column.column-2
+      .content__column.column-3
+    img.content__loader.hidden(src="/images/site-images/Rolling-1.3s-100px.gif")
+    block scripts
