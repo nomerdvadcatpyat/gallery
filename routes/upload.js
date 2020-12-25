@@ -33,11 +33,13 @@ const upload = multer({
 
 router.post('/image', (req, res) => {
   upload(req, res, err => { // загружаем полноразмерную картинку
-    if(err) {
+    if(err || !req.file) {
       let error = '';
-      if(err.code === 'LIMIT_FILE_SIZE') 
+      if(!req.file)
+        error = "Вставьте картинку"
+      else if(err.code === 'LIMIT_FILE_SIZE') 
         error = "Картинка не более 5mb";
-      if(err.code === 'EXTENTION') 
+      else if(err.code === 'EXTENTION') 
         error = 'Только jpeg и png';
       console.log(error);
       res.json({ ok: false, error });

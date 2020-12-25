@@ -11,8 +11,8 @@ html(lang="en")
   body
     header.header
       .full-img-pic-layout.hidden
-        img.full-img-pic-layout__arrow-right(src="/images/site-images/arrow-right.png")
-        img.full-img-pic-layout__arrow-left(src="/images/site-images/arrow-left.png")
+        .full-img-pic-layout__arrow-right
+        .full-img-pic-layout__arrow-left
 
       .header__first-two-buttons
         a.header__button.header__index-link(href="/") На главную
@@ -67,6 +67,6 @@ html(lang="en")
   script(src="/javascripts/register.js")
   script(src="/javascripts/login.js")
   script(src="/javascripts/upload-image.js")
-  script(src="/javascripts/gallery.js")
+  script(src="/javascripts/gallery.js" type="module")
 
 

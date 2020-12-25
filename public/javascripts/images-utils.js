@@ -1,101 +1,137 @@
-// Сюда надо вынести общую логику для индекс картинок и для картинок юзера
+let allPics = []; // жсоны картинок
+export let isMobile = $(window).width() <= 700 ? true : false;
+// Для балансировки колонок
+let col1Height = 0; 
+let col2Height = 0;
+let col3Height = 0;
+// Для перемещения по полноэкранной галерее
+export let column1Length = 0;
+export let column2Length = 0;
+export let column3Length = 0;
+export let mobileColumnLength = 0;
+// Для запросов к бд
+let limit = 12;
+let skip = 0;
+let isEnd = false;
+let galleryOwner;
 
-export class HtmlColumnsCreator {
-  constructor(condtitonForDBreq) {
-    // Для балансировки колонок
-    this.col1Height = 0; 
-    this.col2Height = 0;
-    this.col3Height = 0;
+let oldWidth = $(window).width();
+$(function() {
+  $(window).on('resize', function() { // Переход между мобильным и десктопным режимом.
+    if ($(window).width() <= 700 && oldWidth > 700 || $(window).width() > 700 && oldWidth <= 700) {
+      // При переходе обнуляем все значения построенных колонок и строим заново
+      column1Length = 0;
+      column2Length = 0;
+      column3Length = 0;
+      col1Height = 0; 
+      col2Height = 0;
+      col3Height = 0;
+      mobileColumnLength = 0;
+      if($(window).width() <= 700 && oldWidth > 700) {
+        isMobile = true;
+        createMobileColumn(allPics);
+      }
+      else {
+        isMobile = false;
+        createThreeColumns(allPics);
+      }
+    } 
+    oldWidth = $(window).width();
+  });
+});
+
+export function addPicsInColumns(owner) {
+    if(isEnd) return;
+
+    if(!galleryOwner) // Если еще не установили владельца галереи (Если это не индекс пейдж)
+      galleryOwner = owner ? {owner} : {};
     
-    // Для перемещения по полноэкранной галерее
-    this.column1Length = 0;
-    this.column2Length = 0;
-    this.column3Length = 0;
-
-    // Для запросов к бд
-    this.limit = 12;
-    this.skip = 0;
-    this.condtitonForDBreq = condtitonForDBreq || {}; // Используется для запроса по логину для профиля пользователя
-    this.isEnd = false;
-  }
-
-  addPicsInColumns() {
-    if(this.isEnd) return;
-
     $.ajax({
       beforeSend: function() {
         $('.content__loader').removeClass('hidden');
       },
       type: "GET",
-      url: `/images?limit=${this.limit}&skip=${this.skip}&condition=${JSON.stringify(this.condtitonForDBreq)}`
+      url: `/images?limit=${limit}&skip=${skip}&condition=${JSON.stringify(galleryOwner)}`
     })
     .done(pics => {
       $('.content__loader').addClass('hidden')
       if(pics.length === 0) {
-        this.isEnd = true;
+        isEnd = true;
         $('.content').append('<p class=content__end-text> Вы долистали до конца. </p>');
       }
-      console.log(pics);
-      pics.forEach(pic => {
-        const minColumn = Math.min(this.col1Height, this.col2Height, this.col3Height);
-        switch(minColumn) {
-          case this.col1Height: {
-            pic.posInColumn = ++this.column1Length;
-            $('.column-1').append(this.getHtmlPic(pic, 1));
-            this.col1Height += pic.minImageHeight;
-            break;
-          }
-          case this.col2Height: {
-            pic.posInColumn = ++this.column2Length;
-            $('.column-2').append(this.getHtmlPic(pic, 2));
-            this.col2Height += pic.minImageHeight;
-            break;
-          }
-          case this.col3Height: {
-            pic.posInColumn = ++this.column3Length;
-            $('.column-3').append(this.getHtmlPic(pic, 3));
-            this.col3Height += pic.minImageHeight;
-            break;
-          }
-        }
-      })
+
+      allPics.push(...pics); // Добавляем пришедшие жсоны картинок в массив для балансировки колонок при переходе между мобильным и десктопным режимом
+
+      if(isMobile) createMobileColumn(pics);
+      else createThreeColumns(pics);
       
-      this.skip += pics.length;
-      this.updateColumnsData();
+      skip += pics.length;
     })
     .fail(err => console.log(err));
   }
 
-  populate() {
+export function populate() {
     // нижняя граница документа
     let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
 
     // если пользователь прокрутил достаточно далеко (< 100px до конца)
     if (windowRelativeBottom < document.documentElement.clientHeight + 100) {
-      this.addPicsInColumns();
-      this.updateColumnsData();
+      addPicsInColumns();
     }
   }
 
-  getHtmlPic(pic, columnNum) {
-    return $(`<section class="img-container" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="0">
+function getHtmlPic(pic, columnNum) {
+    return $(`<section class="img-container ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="0">
                 <img class="img-container__img" src=${pic.minImage} alt=${pic.alt}>
                 <section class="img-container__info img-info">
                   <a class="img-info__link" href="/account/${pic.owner}">${pic.owner}</a>
                   <p class="img-info__text">${pic.alt}</p>
                 </section>
               </section>`);
-  }
-
-  updateColumnsData() { 
-    $('.content__columns').attr('data-col-3-length', this.column3Length);        
-  }
 }
 
-export function debounce(fn, ms, context) {
+function createMobileColumn(pics) {
+  $('.desktop-pic').remove();
+
+  pics.forEach(pic => {
+    pic.posInColumn = ++mobileColumnLength;
+    $('.column-3').append(getHtmlPic(pic, 3, true));
+  });
+}
+
+function createThreeColumns(pics) {
+    $('.mobile-pic').remove();
+
+    pics.forEach(pic => {
+      const minColumn = Math.min(col1Height, col2Height, col3Height);
+      console.log(minColumn, col1Height, col2Height, col3Height)
+      switch(minColumn) {
+        case col1Height: {
+          pic.posInColumn = ++column1Length;
+          $('.column-1').append(getHtmlPic(pic, 1));
+          col1Height += pic.minImageHeight;
+          break;
+        }
+        case col2Height: {
+          pic.posInColumn = ++column2Length;
+          $('.column-2').append(getHtmlPic(pic, 2));
+          col2Height += pic.minImageHeight;
+          break;
+        }
+        case col3Height: {
+          pic.posInColumn = ++column3Length;
+          $('.column-3').append(getHtmlPic(pic, 3));
+          col3Height += pic.minImageHeight;
+          break;
+        }
+      }
+    });
+  }
+
+export function debounce(fn, ms) {
   let timeout;
   return function () {
-    const fnCall = () => { fn.apply(context, arguments) }
+    const fnCall = () => { fn.apply(this, arguments) }
     clearTimeout(timeout); // clearTimeout от undefinded ничего не сделает
     timeout = setTimeout(fnCall, ms);
   }

@@ -1,8 +1,13 @@
+import { isMobile, column1Length, column2Length, column3Length, mobileColumnLength } from './images-utils.js';
+
 let currentColumn;
 let currentRow;
 
 $(function() {
-  const showImage = href => $('.full-img-pic-layout').append(`<img class="full-img" src=${href}>`);
+  const showImage = href => {
+    console.log('append',href)
+    $('.full-img-pic-layout').append(`<img class="full-img" src=${href}>`);
+  }
 
   // Делегирование клика на контейнер картинки
   $('.content__columns').on('click', function(e) {
@@ -18,6 +23,9 @@ $(function() {
       const href = $(pic).data('href');
       currentColumn = +$(pic).data('column');
       currentRow = +$(pic).data('colPosition');
+
+      console.log('oncklick col row', currentColumn, currentRow);
+      console.log('onclick href', href);
 
       openFullImageGallery();
       showImage(href);
@@ -36,19 +44,27 @@ $(function() {
   $('.full-img-pic-layout__arrow-right').on('click', (e) => nextImage());
   $('.full-img-pic-layout__arrow-left').on('click', (e) => previousImage());
 
-  $(document).on('keydown', (e) => {
+  $(window).on('keydown', (e) => {
     console.log(e.code);
-    if($('.full-img')) {
+    if($('.full-img').length !== 0) {
       if(e.code === "ArrowRight") nextImage();
       else if (e.code === "ArrowLeft") previousImage();
       else if (e.code === "Escape") closeFullImageGallery();
     }
-  })
+  });
+
+  $(window).on('mousewheel DOMMouseScroll', function(e){
+    console.log($('.full-img'))
+    if($('.full-img').length !== 0) { 
+      console.log('in mousewheel')
+      if(e.originalEvent.wheelDelta /120 > 0) nextImage();
+      else previousImage();
+    }
+  });
 
   const openFullImageGallery = () => {
     $('.full-img-pic-layout').removeClass('hidden');
     $('body').css('overflow','hidden');
-
   }
   
   const closeFullImageGallery = () => {
@@ -59,26 +75,37 @@ $(function() {
 
   const nextImage = () => {
     $('.full-img').remove();
+    console.log('oldCol', currentColumn);
+    console.log('oldRow', currentRow);
+    console.log('mobileColLen', mobileColumnLength);
 
-    // Проверка элементов в текущей строке
-    const nextElemInCurrentRow = checkNextInCurrentRow();
-    if(nextElemInCurrentRow) 
-      currentColumn = nextElemInCurrentRow;
-    else {
-      // Проверка следующей строки или переход на (0,0)
-      const nextElemInNextRow = checkNextRow();
-      if(nextElemInNextRow) {
-        currentRow++;
-        currentColumn = nextElemInNextRow;
-      }
-      else {
+    if(isMobile) {
+      currentColumn = 3;
+      if(currentRow === mobileColumnLength) 
         currentRow = 1;
-        currentColumn = 1;
+      else currentRow++;
+    }
+    else {
+      // Проверка элементов в текущей строке
+      const nextElemInCurrentRow = checkNextInCurrentRow();
+      if(nextElemInCurrentRow) 
+        currentColumn = nextElemInCurrentRow;
+      else {
+        // Проверка следующей строки или переход на (0,0)
+        const nextElemInNextRow = checkNextRow();
+        if(nextElemInNextRow) {
+          currentRow++;
+          currentColumn = nextElemInNextRow;
+        }
+        else {
+          currentRow = 1;
+          currentColumn = 1;
+        }
       }
     }
     console.log('out next curCol', currentColumn);
-    console.log('out next curPos', currentRow);
-
+    console.log('out next curRow', currentRow);
+    
     const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
     showImage(href);
   } 
@@ -118,20 +145,40 @@ $(function() {
   const previousImage = () => {
     $('.full-img').remove();
 
-    const previousElem = checkPrevInCurrentRow();
-    if(previousElem) 
-      currentColumn = previousElem;
+    if(isMobile) {
+      currentColumn = 3;
+      if(currentRow === 1) 
+        currentRow = mobileColumnLength;
+      else currentRow--;
+    }
     else {
-      const prevRowElem = checkPrevRow();
-      if(prevRowElem) {
-        currentRow--;
-        currentColumn = prevRowElem;
-      }
+      const previousElem = checkPrevInCurrentRow();
+      if(previousElem) 
+        currentColumn = previousElem;
       else {
-        currentRow = +$('.content__columns').attr('data-col-3-length');
-        currentColumn = 3;
+        const prevRowElem = checkPrevRow();
+        if(prevRowElem) {
+          currentRow--;
+          currentColumn = prevRowElem;
+        }
+        else {
+          const maxColLength = Math.max(column1Length, column2Length, column3Length);
+          if(column3Length === maxColLength) {
+            currentRow = column3Length;
+            currentColumn = 3;
+          }
+          else if(column2Length == maxColLength) {
+            currentRow = column2Length;
+            currentColumn = 2;
+          }
+          else {
+            currentRow = column1Length;
+            currentColumn = 1;
+          }
+        }
       }
     }
+
     
     console.log('out next curCol', currentColumn);
     console.log('out next curPos', currentRow);
@@ -169,7 +216,7 @@ $(function() {
       return 1;
     }
   }
-})
+});
 
 
 
