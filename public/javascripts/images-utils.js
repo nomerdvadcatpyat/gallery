@@ -40,45 +40,43 @@ $(function() {
   });
 });
 
-export function addPicsInColumns(owner) {
-    if(isEnd) return;
+export async function addPicsInColumns(owner) {
+    if(isEnd) return false;
 
     if(!galleryOwner) // Если еще не установили владельца галереи (Если это не индекс пейдж)
       galleryOwner = owner ? {owner} : {};
     
-    $.ajax({
-      beforeSend: function() {
-        $('.content__loader').removeClass('hidden');
-      },
-      type: "GET",
-      url: `/images?limit=${limit}&skip=${skip}&condition=${JSON.stringify(galleryOwner)}`
-    })
-    .done(pics => {
-      $('.content__loader').addClass('hidden')
-      if(pics.length === 0) {
-        isEnd = true;
-        $('.content').append('<p class=content__end-text> Вы долистали до конца. </p>');
-      }
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        beforeSend: function() {
+          $('.content__loader').removeClass('hidden');
+        },
+        type: "GET",
+        url: `/images?limit=${limit}&skip=${skip}&condition=${JSON.stringify(galleryOwner)}`
+      })
+      .done(pics => {
+        $('.content__loader').addClass('hidden')
+        if(pics.length === 0) {
+          isEnd = true;
+          $('.content').append('<p class=content__end-text> Вы долистали до конца. </p>');
+          resolve(false);
+        }
 
-      allPics.push(...pics); // Добавляем пришедшие жсоны картинок в массив для балансировки колонок при переходе между мобильным и десктопным режимом
+        allPics.push(...pics); // Добавляем пришедшие жсоны картинок в массив для балансировки колонок при переходе между мобильным и десктопным режимом
 
-      if(isMobile) createMobileColumn(pics);
-      else createThreeColumns(pics);
-      
-      skip += pics.length;
-    })
-    .fail(err => console.log(err));
+        if(isMobile) createMobileColumn(pics);
+        else createThreeColumns(pics);
+        
+        skip += pics.length;
+        resolve(true);
+      })
+      .fail(err => {
+        console.log(err);
+        reject(err);
+      });
+    });
   }
 
-export function populate() {
-    // нижняя граница документа
-    let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
-
-    // если пользователь прокрутил достаточно далеко (< 100px до конца)
-    if (windowRelativeBottom < document.documentElement.clientHeight + 100) {
-      addPicsInColumns();
-    }
-  }
 
 function getHtmlPic(pic, columnNum) {
     return $(`<section class="img-container ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="0">

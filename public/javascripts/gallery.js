@@ -1,12 +1,36 @@
-import { isMobile, column1Length, column2Length, column3Length, mobileColumnLength } from './images-utils.js';
+import { isMobile, debounce, addPicsInColumns } from './images-utils.js';
 
 let currentColumn;
 let currentRow;
 
+let isFullScreenGallery = () => $('.full-img-layout__image').length !== 0;
+
 $(function() {
+
+  // Загрузка первых 12 картинок
+  let owner;
+  if(window.location.pathname.includes('account'))
+    owner = window.location.pathname.split('/')[2];
+    
+  addPicsInColumns(owner);
+
+  // подгрузка картинок, в неполноэкранной галерее
+  $(window).on('scroll', debounce(() => {
+    if(!isFullScreenGallery()) {
+      let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
+      // если пользователь прокрутил достаточно далеко (< 100px до конца)
+      if (windowRelativeBottom < document.documentElement.clientHeight + 100)       
+      addPicsInColumns();
+    }
+  }, 500));
+
+
   const showImage = href => {
     console.log('append',href)
-    $('.full-img-pic-layout').append(`<img class="full-img" src=${href}>`);
+    $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+
+    if((currentColumn === 1 || isMobile) && currentRow === 1) $('.full-img-layout__arrow-left').addClass('hidden');
+    else $('.full-img-layout__arrow-left').removeClass('hidden');
   }
 
   // Делегирование клика на контейнер картинки
@@ -32,57 +56,70 @@ $(function() {
     }
   })
 
-  $('.full-img-pic-layout').on('click', function (e) {
+  $('.full-img-layout').on('click', function (e) {
     console.log(e.target)
     const targetClass = $(e.target).attr('class');
-    if(targetClass !== 'full-img-pic-layout__arrow-left' && targetClass !== 'full-img-pic-layout__arrow-right' && targetClass !== 'full-img') {
-      console.log($(e.target).attr('class'));
+    console.log($(e.target).attr('class'));
+    if(!targetClass.includes('full-img-layout__arrow-left') && !targetClass.includes('full-img-layout__arrow-right') && !targetClass.includes('full-img-layout__image')) {
       closeFullImageGallery();
     }
   })
 
-  $('.full-img-pic-layout__arrow-right').on('click', (e) => nextImage());
-  $('.full-img-pic-layout__arrow-left').on('click', (e) => previousImage());
+
+  // Различные перемещения по полноэкранной галерее
+
+  $('.full-img-layout__arrow-right').on('click', () => nextImage());
+  $('.full-img-layout__arrow-left').on('click', () => previousImage());
 
   $(window).on('keydown', (e) => {
     console.log(e.code);
-    if($('.full-img').length !== 0) {
+    if(isFullScreenGallery()) {
       if(e.code === "ArrowRight") nextImage();
       else if (e.code === "ArrowLeft") previousImage();
       else if (e.code === "Escape") closeFullImageGallery();
     }
   });
 
-  $(window).on('mousewheel DOMMouseScroll', function(e){
-    console.log($('.full-img'))
-    if($('.full-img').length !== 0) { 
+  $(window).on('wheel', function(e){
+    console.log($('.full-img-layout__image'))
+    console.log(e);
+    if(isFullScreenGallery()) { 
       console.log('in mousewheel')
-      if(e.originalEvent.wheelDelta /120 > 0) nextImage();
+      if(e.originalEvent.deltaY > 0) nextImage();
       else previousImage();
     }
   });
 
+  // $(window).on("swipeleft", () => nextImage());
+  // $(window).on("swiperight", () => previousImage());
+
   const openFullImageGallery = () => {
-    $('.full-img-pic-layout').removeClass('hidden');
+    $('.full-img-layout').removeClass('hidden');
     $('body').css('overflow','hidden');
   }
   
   const closeFullImageGallery = () => {
-    $('.full-img').remove();
-    $('.full-img-pic-layout').addClass('hidden');
+    $('.full-img-layout__image').remove();
+    $('.full-img-layout').addClass('hidden');
     $('body').css('overflow','auto');
   }
 
-  const nextImage = () => {
-    $('.full-img').remove();
+  const nextImage = async () => {
+    $('.full-img-layout__image').remove();
     console.log('oldCol', currentColumn);
     console.log('oldRow', currentRow);
-    console.log('mobileColLen', mobileColumnLength);
 
     if(isMobile) {
       currentColumn = 3;
-      if(currentRow === mobileColumnLength) 
-        currentRow = 1;
+      if($(`.img-container[data-column=3][data-col-position=${currentRow + 1}]`).length === 0) {
+        const isNewImagesFounded = await addPicsInColumns();
+        console.log('isNewImagesFounded', isNewImagesFounded);
+        if(isNewImagesFounded) {
+          nextImage();
+          return;
+        }
+        else currentRow = 1;
+      }
       else currentRow++;
     }
     else {
@@ -98,8 +135,16 @@ $(function() {
           currentColumn = nextElemInNextRow;
         }
         else {
-          currentRow = 1;
-          currentColumn = 1;
+          const isNewImagesFounded = await addPicsInColumns();
+          console.log('isNewImagesFounded', isNewImagesFounded);
+          if(isNewImagesFounded) {
+            nextImage();
+            return;
+          }
+          else {
+            currentRow = 1;
+            currentColumn = 1;
+          }
         }
       }
     }
@@ -129,8 +174,6 @@ $(function() {
   const checkNextRow = () => {
     console.log('checkNextRow');
     if($(`.img-container[data-column=1][data-col-position=${currentRow + 1}]`).length !== 0) {
-      console.log($(`.img-container[data-column=1][data-col-position=${currentRow + 1}]`).length !== 0)
-      console.log('return 1')
       return 1;
     }
     if($(`.img-container[data-column=2][data-col-position=${currentRow + 1}]`).length !== 0) {
@@ -143,13 +186,11 @@ $(function() {
 
 
   const previousImage = () => {
-    $('.full-img').remove();
+    $('.full-img-layout__image').remove();
 
     if(isMobile) {
       currentColumn = 3;
-      if(currentRow === 1) 
-        currentRow = mobileColumnLength;
-      else currentRow--;
+      if(currentRow !== 1) currentRow--;
     }
     else {
       const previousElem = checkPrevInCurrentRow();
@@ -161,21 +202,21 @@ $(function() {
           currentRow--;
           currentColumn = prevRowElem;
         }
-        else {
-          const maxColLength = Math.max(column1Length, column2Length, column3Length);
-          if(column3Length === maxColLength) {
-            currentRow = column3Length;
-            currentColumn = 3;
-          }
-          else if(column2Length == maxColLength) {
-            currentRow = column2Length;
-            currentColumn = 2;
-          }
-          else {
-            currentRow = column1Length;
-            currentColumn = 1;
-          }
-        }
+        // else {
+        //   const maxColLength = Math.max(column1Length, column2Length, column3Length);
+        //   if(column3Length === maxColLength) {
+        //     currentRow = column3Length;
+        //     currentColumn = 3;
+        //   }
+        //   else if(column2Length == maxColLength) {
+        //     currentRow = column2Length;
+        //     currentColumn = 2;
+        //   }
+        //   else {
+        //     currentRow = column1Length;
+        //     currentColumn = 1;
+        //   }
+        // }
       }
     }
 
