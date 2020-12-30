@@ -43,6 +43,8 @@ $(function() {
 export async function addPicsInColumns(owner) {
     if(isEnd) return false;
 
+    console.log('addPics')
+
     if(!galleryOwner) // Если еще не установили владельца галереи (Если это не индекс пейдж)
       galleryOwner = owner ? {owner} : {};
     
@@ -64,6 +66,8 @@ export async function addPicsInColumns(owner) {
 
         allPics.push(...pics); // Добавляем пришедшие жсоны картинок в массив для балансировки колонок при переходе между мобильным и десктопным режимом
 
+        console.log('isMobile', isMobile);
+
         if(isMobile) createMobileColumn(pics);
         else createThreeColumns(pics);
         
@@ -79,8 +83,8 @@ export async function addPicsInColumns(owner) {
 
 
 function getHtmlPic(pic, columnNum) {
-    return $(`<section class="img-container ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="0">
-                <img class="img-container__img" src=${pic.minImage} alt=${pic.alt}>
+    return $(`<section class="img-container ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="-1">
+                <img class="img-container__img img-container__img_preload" src="/images/site-images/Blocks-1s-300px.gif" data-src=${pic.minImage} alt=${pic.alt}>
                 <section class="img-container__info img-info">
                   <a class="img-info__link" href="/account/${pic.owner}">${pic.owner}</a>
                   <p class="img-info__text">${pic.alt}</p>
@@ -93,7 +97,7 @@ function createMobileColumn(pics) {
 
   pics.forEach(pic => {
     pic.posInColumn = ++mobileColumnLength;
-    $('.column-3').append(getHtmlPic(pic, 3, true));
+    appendPic(pic, 3);
   });
 }
 
@@ -102,23 +106,22 @@ function createThreeColumns(pics) {
 
     pics.forEach(pic => {
       const minColumn = Math.min(col1Height, col2Height, col3Height);
-      console.log(minColumn, col1Height, col2Height, col3Height)
       switch(minColumn) {
         case col1Height: {
           pic.posInColumn = ++column1Length;
-          $('.column-1').append(getHtmlPic(pic, 1));
+          appendPic(pic, 1);
           col1Height += pic.minImageHeight;
           break;
         }
         case col2Height: {
           pic.posInColumn = ++column2Length;
-          $('.column-2').append(getHtmlPic(pic, 2));
+          appendPic(pic, 2);
           col2Height += pic.minImageHeight;
           break;
         }
         case col3Height: {
           pic.posInColumn = ++column3Length;
-          $('.column-3').append(getHtmlPic(pic, 3));
+          appendPic(pic, 3);
           col3Height += pic.minImageHeight;
           break;
         }
@@ -126,12 +129,43 @@ function createThreeColumns(pics) {
     });
   }
 
-export function debounce(fn, ms) {
-  let timeout;
-  return function () {
-    const fnCall = () => { fn.apply(this, arguments) }
-    clearTimeout(timeout); // clearTimeout от undefinded ничего не сделает
-    timeout = setTimeout(fnCall, ms);
+function appendPic(jsonPic, columnNum) {
+  const htmlPicContainer = getHtmlPic(jsonPic, columnNum);
+  $(`.column-${columnNum}`).append(htmlPicContainer);
+
+  const pic = htmlPicContainer.children('.img-container__img');
+  const src = pic.attr('data-src');
+  
+  let newImg = new Image();
+  newImg.onload = function(){
+    $(pic).removeClass('img-container__img_preload');
+    $(pic).addClass('img-container__img_loaded');
+    $(pic).attr('src', src)
   }
+  newImg.src = src;
+}
+
+export function throttle (func, ms) {
+  let isThrottled = false;
+  let savedArgs;
+  let savedThis;
+  
+  function wrapper() {
+    if (isThrottled) {
+      savedArgs = arguments;
+      savedThis = this;
+      return;
+    }
+    func.apply(this, arguments);
+    isThrottled = true;
+    setTimeout(function() {
+      isThrottled = false;
+      if (savedArgs) {
+        wrapper.apply(savedThis, savedArgs);
+        savedArgs = savedThis = null;
+      }      
+    }, ms);
+  }
+  return wrapper;
 }
 

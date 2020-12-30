@@ -1,4 +1,4 @@
-import { isMobile, debounce, addPicsInColumns } from './images-utils.js';
+import { isMobile, throttle, addPicsInColumns } from './images-utils.js';
 
 let currentColumn;
 let currentRow;
@@ -6,7 +6,7 @@ let currentRow;
 let isFullScreenGallery = () => $('.full-img-layout__image').length !== 0;
 
 $(function() {
-
+  
   // Загрузка первых 12 картинок
   let owner;
   if(window.location.pathname.includes('account'))
@@ -15,19 +15,26 @@ $(function() {
   addPicsInColumns(owner);
 
   // подгрузка картинок, в неполноэкранной галерее
-  $(window).on('scroll', debounce(() => {
+  $(window).on('scroll', throttle(() => {
     if(!isFullScreenGallery()) {
       let windowRelativeBottom = document.documentElement.getBoundingClientRect().bottom;
       // если пользователь прокрутил достаточно далеко (< 100px до конца)
       if (windowRelativeBottom < document.documentElement.clientHeight + 100)       
-      addPicsInColumns();
+        addPicsInColumns();
     }
-  }, 500));
+  }, 300));
 
 
   const showImage = href => {
-    console.log('append',href)
-    $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+    console.log('append', href)
+    $('.full-img-layout').append(`<img class="full-img-layout__image" src="/images/site-images/Blocks-1s-300px.gif">`);
+
+    let newImg = new Image();
+    newImg.onload = function(){
+      $('.full-img-layout__image').remove();
+      $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+    }
+    newImg.src = href;
 
     if((currentColumn === 1 || isMobile) && currentRow === 1) $('.full-img-layout__arrow-left').addClass('hidden');
     else $('.full-img-layout__arrow-left').removeClass('hidden');
@@ -48,8 +55,8 @@ $(function() {
       currentColumn = +$(pic).data('column');
       currentRow = +$(pic).data('colPosition');
 
-      console.log('oncklick col row', currentColumn, currentRow);
-      console.log('onclick href', href);
+      // console.log('oncklick col row', currentColumn, currentRow);
+      // console.log('onclick href', href);
 
       openFullImageGallery();
       showImage(href);
@@ -57,9 +64,9 @@ $(function() {
   })
 
   $('.full-img-layout').on('click', function (e) {
-    console.log(e.target)
+    // console.log(e.target)
     const targetClass = $(e.target).attr('class');
-    console.log($(e.target).attr('class'));
+    // console.log($(e.target).attr('class'));
     if(!targetClass.includes('full-img-layout__arrow-left') && !targetClass.includes('full-img-layout__arrow-right') && !targetClass.includes('full-img-layout__image')) {
       closeFullImageGallery();
     }
@@ -89,9 +96,6 @@ $(function() {
       else previousImage();
     }
   });
-
-  // $(window).on("swipeleft", () => nextImage());
-  // $(window).on("swiperight", () => previousImage());
 
   const openFullImageGallery = () => {
     $('.full-img-layout').removeClass('hidden');
@@ -148,9 +152,6 @@ $(function() {
         }
       }
     }
-    console.log('out next curCol', currentColumn);
-    console.log('out next curRow', currentRow);
-    
     const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
     showImage(href);
   } 
@@ -202,28 +203,8 @@ $(function() {
           currentRow--;
           currentColumn = prevRowElem;
         }
-        // else {
-        //   const maxColLength = Math.max(column1Length, column2Length, column3Length);
-        //   if(column3Length === maxColLength) {
-        //     currentRow = column3Length;
-        //     currentColumn = 3;
-        //   }
-        //   else if(column2Length == maxColLength) {
-        //     currentRow = column2Length;
-        //     currentColumn = 2;
-        //   }
-        //   else {
-        //     currentRow = column1Length;
-        //     currentColumn = 1;
-        //   }
-        // }
       }
     }
-
-    
-    console.log('out next curCol', currentColumn);
-    console.log('out next curPos', currentRow);
-
     const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
     showImage(href);
   }
