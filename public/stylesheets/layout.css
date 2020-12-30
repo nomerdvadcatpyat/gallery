@@ -476,7 +476,7 @@ html, body {
   align-items: center;
 }
 
-.img-container:hover {
+.img-container_active:hover {
   cursor: pointer; 
 }
 

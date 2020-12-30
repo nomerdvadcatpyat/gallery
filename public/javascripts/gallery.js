@@ -26,13 +26,16 @@ $(function() {
 
 
   const showImage = href => {
-    console.log('append', href)
     $('.full-img-layout').append(`<img class="full-img-layout__image" src="/images/site-images/Blocks-1s-300px.gif">`);
+
+    console.log('in show')
 
     let newImg = new Image();
     newImg.onload = function(){
-      $('.full-img-layout__image').remove();
-      $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+      if(isFullScreenGallery()) {
+        $('.full-img-layout__image').remove();
+        $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+      }
     }
     newImg.src = href;
 
@@ -42,7 +45,7 @@ $(function() {
 
   // Делегирование клика на контейнер картинки
   $('.content__columns').on('click', function(e) {
-    if($(e.target).parent().attr('class').includes('img-container')) {
+    if($(e.target).parent().attr('class').includes('img-container_active')) {
       let pic = $(e.target).parent();
       // Если кликнули не по img-container, а по ссылке на профиль или на описание картинки
       if($(e.target).attr('class').includes('img-info__link')) return;
@@ -88,10 +91,8 @@ $(function() {
   });
 
   $(window).on('wheel', function(e){
-    console.log($('.full-img-layout__image'))
-    console.log(e);
     if(isFullScreenGallery()) { 
-      console.log('in mousewheel')
+
       if(e.originalEvent.deltaY > 0) nextImage();
       else previousImage();
     }

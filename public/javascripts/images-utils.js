@@ -12,6 +12,7 @@ export let mobileColumnLength = 0;
 // Для запросов к бд
 let limit = 12;
 let skip = 0;
+let lastSkip;
 let isEnd = false;
 let galleryOwner;
 
@@ -43,7 +44,8 @@ $(function() {
 export async function addPicsInColumns(owner) {
     if(isEnd) return false;
 
-    console.log('addPics')
+    if(lastSkip === skip) return;// Если интернет медленный, может приходить много одинаковых запросов
+    lastSkip = skip;
 
     if(!galleryOwner) // Если еще не установили владельца галереи (Если это не индекс пейдж)
       galleryOwner = owner ? {owner} : {};
@@ -57,6 +59,7 @@ export async function addPicsInColumns(owner) {
         url: `/images?limit=${limit}&skip=${skip}&condition=${JSON.stringify(galleryOwner)}`
       })
       .done(pics => {
+        console.log('ajax done');
         $('.content__loader').addClass('hidden')
         if(pics.length === 0) {
           isEnd = true;
@@ -65,8 +68,6 @@ export async function addPicsInColumns(owner) {
         }
 
         allPics.push(...pics); // Добавляем пришедшие жсоны картинок в массив для балансировки колонок при переходе между мобильным и десктопным режимом
-
-        console.log('isMobile', isMobile);
 
         if(isMobile) createMobileColumn(pics);
         else createThreeColumns(pics);
@@ -83,7 +84,7 @@ export async function addPicsInColumns(owner) {
 
 
 function getHtmlPic(pic, columnNum) {
-    return $(`<section class="img-container ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="-1">
+    return $(`<section class="img-container img-container_non-active ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="-1">
                 <img class="img-container__img img-container__img_preload" src="/images/site-images/Blocks-1s-300px.gif" data-src=${pic.minImage} alt=${pic.alt}>
                 <section class="img-container__info img-info">
                   <a class="img-info__link" href="/account/${pic.owner}">${pic.owner}</a>
@@ -138,6 +139,8 @@ function appendPic(jsonPic, columnNum) {
   
   let newImg = new Image();
   newImg.onload = function(){
+    $(htmlPicContainer).removeClass('img-container_non-active');
+    $(htmlPicContainer).addClass('img-container_active');
     $(pic).removeClass('img-container__img_preload');
     $(pic).addClass('img-container__img_loaded');
     $(pic).attr('src', src)
