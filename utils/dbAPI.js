@@ -4,7 +4,7 @@ const User = require('../models/user.js');
 const Image = require('../models/image');
 const config = require('../config');
 
-const mongoUri = config.mongoUri;
+const mongoUri = config.DATABASE_URL;
 mongoose.connect(mongoUri);
 mongoose.Promise = global.Promise;
 exports.connection = mongoose.connection;
@@ -64,11 +64,6 @@ exports.getUser = function(condition) {
         })
     });
 }
-
-
-// exports.getUser = function(id) {
-//     return User.findOne(id);
-// }
  
 exports.checkUser = function(userData) {
   return new Promise((resolve, reject) => {
