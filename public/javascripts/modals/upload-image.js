@@ -1,3 +1,7 @@
+import { showErrorMessage, disableButton, enableButton } from './modals-utils.js'
+
+// Окно загрузки картинки и загрузка картинок
+
 $(function() {
 // смена иконки на кнопке загрузки картинки
   $('.upload-image-form__input-img').each(function() {
@@ -24,13 +28,16 @@ $(function() {
 
   $('.modal-layout').on('click', function(e) {
       $('.upload-image-form').addClass('hidden');
-      $('.modal-layout').addClass('hidden')
+      $('.modal-layout').addClass('hidden');
       // $(document.body).css('overflow','auto'); 
   })
   
   // upload
   $('#fileinfo').on('submit', function (e) {
     e.preventDefault();
+    if($('.modal-button_inactive').length > 0) return;
+
+    disableButton('.upload-image-form__submit', '/images/site-images/Rolling-1.3s-100px.gif');
 
     const formData = new FormData(this);
     formData.set('alt', $('.upload-image-form__img-description').val())
@@ -46,12 +53,11 @@ $(function() {
       console.log(data);
 
       if(!data.ok) {
-        if($('.error-message').length == 0)
-          $('.upload-image-form__upload-img-button').after('<p class="error-message">' + data.error + '</p>');
-        else $('.error-message').text(data.error);
+        showErrorMessage('.upload-image-form__submit', data.error);
       } 
       else $(location).attr('href', '/');
       
+      enableButton('.upload-image-form__submit');
     })
     .fail(err => console.log(err));
    });

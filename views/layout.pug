@@ -33,24 +33,24 @@ html(lang="en")
           input.login.sign-in-container__input(type="text" placeholder="Логин")
           input.pass.sign-in-container__input(type="password" placeholder="Пароль")
           input.rePass.sign-in-container__input(type="password" placeholder="Повторите пароль")
-          button.sign-up-inner-container__submit.modal-button Зарегистрироваться
+          button.sign-up-inner-container__submit.modal-button.modal-button_active Зарегистрироваться
       .sign-in-inner-container
         form.sign-in-inner-container__form(action="#")
           h1.sign-in-inner-container__title Вход
           input.sign-in-login.sign-in-container__input(type="text" placeholder="Логин")
           input.sign-in-pass.sign-in-container__input(type="password" placeholder="Пароль")
-          button.sign-in-inner-container__submit.modal-button Войти
+          button.sign-in-inner-container__submit.modal-button.modal-button_active Войти
 
       .sign-in-container__overlay
         .overlay
           .overlay-panel__overlay-right
             h1.overlay__title Добро пожаловать. Снова.
             p.overlay__text Еще нет аккаунта?
-            button#signUp-switch.modal-button.overlay__switch-button Зарегистрироваться
+            button#signUp-switch.modal-button.modal-button_active Зарегистрироваться
           .overlay-panel__overlay-left
             h1.overlay__title Добро пожаловать!
             p.overlay__text Уже имеете аккаунт?
-            button#signIn-switch.modal-button.overlay__switch-button Войти
+            button#signIn-switch.modal-button.modal-button_active Войти
 
       //- Модальное окно загрузки картинки
     form.upload-image-form.hidden(method="POST" enctype="multipart/form-data" name="fileinfo" id="fileinfo")
@@ -59,14 +59,15 @@ html(lang="en")
         i.icon.fa.fa-check
         span.upload-image-form__file-name Загрузить картинку
       input.upload-image-form__img-description(type="text" placeholder="Краткое описание картинки")
-      button.upload-image-form__upload-img-button.modal-button Отправить
+      button.upload-image-form__submit.modal-button.modal-button_active Отправить
     block content
 
   script(src="https://code.jquery.com/jquery-3.5.1.min.js")
-  script(src="/javascripts/register.js")
-  script(src="/javascripts/login.js")
+  script(src="/javascripts/modals/modals-utils.js" type="module")
+  script(src="/javascripts/modals/register.js" type="module")
+  script(src="/javascripts/modals/login.js" type="module")
+  script(src="/javascripts/modals/upload-image.js" type="module")
   script(src="/javascripts/images-utils.js" type="module")
-  script(src="/javascripts/upload-image.js")
   script(src="/javascripts/gallery.js" type="module")
 
 

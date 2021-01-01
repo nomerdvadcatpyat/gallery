@@ -41,7 +41,7 @@ router.post('/image', (req, res) => {
     if(err || !req.file) {
       let error = '';
       if(!req.file)
-        error = "Вставьте картинку"
+        error = "Вставьте картинку";
       else if(err.code === 'LIMIT_FILE_SIZE') 
         error = "Картинка не более 5mb";
       else if(err.code === 'EXTENTION') 

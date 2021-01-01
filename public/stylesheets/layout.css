@@ -73,9 +73,11 @@ html, body {
     align-items: center;
   }
 
-  .error-message, .success {
+  .upload-image-form__img-description, .error-message, .success {
     font-size: 14px;
   }
+
+  
 }
 
 
@@ -164,6 +166,11 @@ html, body {
   .full-img-layout__arrow-left {
     left: 40px;
   }
+
+  .upload-image-form__img-description {
+    font-size: 30px;
+    width: 60%;
+  }
   
 }
 
@@ -185,7 +192,6 @@ html, body {
 .modal-button {
 	border-radius: 20px;
 	border: 1px solid white;
-	background-color: #1b252f;
 	color: #FFFFFF;
 	font-weight: bold;
 	letter-spacing: 1px;
@@ -193,24 +199,27 @@ html, body {
   transition: transform 80ms ease-in;
 }
 
-.modal-button:active {
-	transform: scale(0.95);
-}
-
 .modal-button:focus {
 	outline: none;
 }
 
-.header__button:hover, .modal-button:hover {
+.modal-button_active {
+  background-color: #1b252f;
+	transform: scale(0.95);
+}
+
+.modal-button_active:active {
+	transform: scale(0.95);
+}
+
+.modal-button__inactive {
+  color: gray;
+}
+
+
+.header__button:hover, .modal-button_active:hover {
   cursor: pointer;
 }
-
-.overlay__switch-button {
-	background-color: transparent;
-	border-color: #FFFFFF;
-}
-
-
 
 /* СТИЛИ МОДАЛКИ РЕГИСТРАЦИИ И АВТОРИЗАЦИИ */
 
@@ -355,11 +364,16 @@ html, body {
 	transform: translateX(20%);
 }
 
-.error-message, .success {
+.error-message, .success, .modal-loader {
   position: absolute;
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.modal-loader {
+  bottom: 5%;
+  height: 60px;
 }
 
 .error-message {
@@ -442,11 +456,10 @@ html, body {
 
 .upload-image-form__img-description {
   background-color: #1b252f;
-  width: 60%;
   border: none;
   border-bottom: 1px solid white;
-  font-size: 30px;
   margin: 10% 0;
+  padding: 0 10px;
   text-align: center;
   color: white;
 }
@@ -524,7 +537,7 @@ html, body {
 }
 
 
-.full-img-layout__image {
+.full-img-layout__image, .full-img-layout__image-loader {
   display: block;
   max-height: 100%;
   max-width: 100%;
