@@ -3,7 +3,7 @@ import { isMobile, throttle, addPicsInColumns } from './images-utils.js';
 let currentColumn;
 let currentRow;
 
-let isFullScreenGallery = () => $('.full-img-layout__image').length !== 0;
+let isFullScreenGallery = () => $('.full-img-layout__image').length !== 0 ||  $('.full-img-layout__image-loader').length !== 0;
 
 $(function() {
   
@@ -25,16 +25,19 @@ $(function() {
   }, 300));
 
 
-  const showImage = href => {
-    $('.full-img-layout').append(`<img class="full-img-layout__image" src="/images/site-images/Blocks-1s-300px.gif">`);
-
-    console.log('in show')
+  const showImage = (href, reqRow, reqColumn) => {
+    $('.full-img-layout').append(`<img class="full-img-layout__image-loader" src="/images/site-images/Blocks-1s-300px.gif">`);
 
     let newImg = new Image();
     newImg.onload = function(){
       if(isFullScreenGallery()) {
-        $('.full-img-layout__image').remove();
-        $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+        console.log('req r c', reqRow, reqColumn);
+        console.log('current r c', currentRow, currentColumn);
+        // Если пользователь будет быстро скроллить полнэкранную галерею, то покажется только последняя картинка
+        if(reqRow === currentRow && reqColumn === currentColumn) {
+          $('.full-img-layout__image-loader').remove();
+          $('.full-img-layout').append(`<img class="full-img-layout__image" src=${href}>`);
+        }
       }
     }
     newImg.src = href;
@@ -42,6 +45,8 @@ $(function() {
     if((currentColumn === 1 || isMobile) && currentRow === 1) $('.full-img-layout__arrow-left').addClass('hidden');
     else $('.full-img-layout__arrow-left').removeClass('hidden');
   }
+
+
 
   // Делегирование клика на контейнер картинки
   $('.content__columns').on('click', function(e) {
@@ -58,11 +63,9 @@ $(function() {
       currentColumn = +$(pic).data('column');
       currentRow = +$(pic).data('colPosition');
 
-      // console.log('oncklick col row', currentColumn, currentRow);
-      // console.log('onclick href', href);
-
       openFullImageGallery();
-      showImage(href);
+      showImage(href, currentRow, currentColumn);
+      loadNextImage();
     }
   })
 
@@ -78,14 +81,14 @@ $(function() {
 
   // Различные перемещения по полноэкранной галерее
 
-  $('.full-img-layout__arrow-right').on('click', () => nextImage());
-  $('.full-img-layout__arrow-left').on('click', () => previousImage());
+  $('.full-img-layout__arrow-right').on('click', () => showNextFullImage());
+  $('.full-img-layout__arrow-left').on('click', () => showPreviousFullImage());
 
   $(window).on('keydown', (e) => {
     console.log(e.code);
     if(isFullScreenGallery()) {
-      if(e.code === "ArrowRight") nextImage();
-      else if (e.code === "ArrowLeft") previousImage();
+      if(e.code === "ArrowRight") showNextFullImage();
+      else if (e.code === "ArrowLeft") showPreviousFullImage();
       else if (e.code === "Escape") closeFullImageGallery();
     }
   });
@@ -93,8 +96,8 @@ $(function() {
   $(window).on('wheel', function(e){
     if(isFullScreenGallery()) { 
 
-      if(e.originalEvent.deltaY > 0) nextImage();
-      else previousImage();
+      if(e.originalEvent.deltaY > 0) showNextFullImage();
+      else showPreviousFullImage();
     }
   });
 
@@ -109,72 +112,97 @@ $(function() {
     $('body').css('overflow','auto');
   }
 
-  const nextImage = async () => {
+
+
+  // Следующая и предыдущая полноэкранные картинки
+
+  const showNextFullImage = async () => {
     $('.full-img-layout__image').remove();
-    console.log('oldCol', currentColumn);
-    console.log('oldRow', currentRow);
+    $('.full-img-layout__image-loader').remove();
+
+    const newPos = await getNextPosition();
+    console.log('newPos', newPos)
+    currentRow = newPos.row;
+    currentColumn = newPos.column;
+
+    const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
+    showImage(href, currentRow, currentColumn);
+    loadNextImage();
+  } 
+
+
+  const loadNextImage = async () => {
+    const nextPosition = await getNextPosition();
+    const nextImageHref = $(`.img-container[data-column=${nextPosition.column}][data-col-position=${nextPosition.row}]`).data('href');
+    console.log(nextImageHref);
+    new Image().src = nextImageHref;
+  }
+
+  const getNextPosition = async () => {
+    const res = {
+      row: currentRow,
+      column: currentColumn
+    }
 
     if(isMobile) {
-      currentColumn = 3;
+      res.column = 3;
       if($(`.img-container[data-column=3][data-col-position=${currentRow + 1}]`).length === 0) {
         const isNewImagesFounded = await addPicsInColumns();
         console.log('isNewImagesFounded', isNewImagesFounded);
         if(isNewImagesFounded) {
-          nextImage();
-          return;
+          return getNextPosition();
         }
-        else currentRow = 1;
+        else res.row = 1;
       }
-      else currentRow++;
+      else res.row = currentRow + 1;
     }
     else {
       // Проверка элементов в текущей строке
-      const nextElemInCurrentRow = checkNextInCurrentRow();
+      const nextElemInCurrentRow = getNextPosInCurrentRow();
       if(nextElemInCurrentRow) 
-        currentColumn = nextElemInCurrentRow;
+        res.column = nextElemInCurrentRow;
       else {
         // Проверка следующей строки или переход на (0,0)
-        const nextElemInNextRow = checkNextRow();
+        const nextElemInNextRow = getNextPosInNextRow();
         if(nextElemInNextRow) {
-          currentRow++;
-          currentColumn = nextElemInNextRow;
+          res.row = currentRow + 1;
+          res.column = nextElemInNextRow;
         }
         else {
           const isNewImagesFounded = await addPicsInColumns();
           console.log('isNewImagesFounded', isNewImagesFounded);
           if(isNewImagesFounded) {
-            nextImage();
-            return;
+            return getNextPosition();
           }
           else {
-            currentRow = 1;
-            currentColumn = 1;
+            res.row = 1;
+            res.column = 1;
           }
         }
       }
     }
-    const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
-    showImage(href);
-  } 
 
-  const checkNextInCurrentRow = () => {
+    return res;
+  }
+
+  const getNextPosInCurrentRow = () => {
     if(currentColumn === 1) {
       if($(`.img-container[data-column=2][data-col-position=${currentRow}]`).length !== 0) {
         return 2;
       }
-      else if($(`.img-container[data-column=3][data-col-position=${currentRow}]`).length !== 0) {
+      if($(`.img-container[data-column=3][data-col-position=${currentRow}]`).length !== 0) {
         return 3;
       }
     }
-    else if(currentColumn === 2) {
+    if(currentColumn === 2) {
       if($(`.img-container[data-column=3][data-col-position=${currentRow}]`).length !== 0) {
         return 3;
       }
     }
   }
 
-  const checkNextRow = () => {
-    console.log('checkNextRow');
+  const getNextPosInNextRow = () => {
+    console.log('getNextPosInNextRow');
     if($(`.img-container[data-column=1][data-col-position=${currentRow + 1}]`).length !== 0) {
       return 1;
     }
@@ -187,35 +215,49 @@ $(function() {
   }
 
 
-  const previousImage = () => {
+
+  const showPreviousFullImage = () => {
     $('.full-img-layout__image').remove();
 
+    const previousPosition = getPreviousPosition();
+    currentRow = previousPosition.row;
+    currentColumn = previousPosition.column;
+
+    const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
+    showImage(href, currentRow, currentColumn);
+  }
+
+  const getPreviousPosition = () => {
+    const res = {
+      row: currentRow,
+      column: currentColumn
+    }
+
     if(isMobile) {
-      currentColumn = 3;
-      if(currentRow !== 1) currentRow--;
+      res.column = 3;
+      if(currentRow !== 1) res.row = currentRow - 1;
     }
     else {
-      const previousElem = checkPrevInCurrentRow();
+      const previousElem = getPreviousPosInCurrentRow();
       if(previousElem) 
-        currentColumn = previousElem;
+        res.column = previousElem;
       else {
-        const prevRowElem = checkPrevRow();
+        const prevRowElem = getPreviousPosInPreviousRow();
         if(prevRowElem) {
-          currentRow--;
-          currentColumn = prevRowElem;
+          res.row = currentRow - 1;
+          res.column = prevRowElem;
         }
       }
     }
-    const href = $(`.img-container[data-column=${currentColumn}][data-col-position=${currentRow}]`).data('href');
-    showImage(href);
+    return res;
   }
 
-  const checkPrevInCurrentRow = () => {
+  const getPreviousPosInCurrentRow = () => {
     if(currentColumn === 3) {
       if($(`.img-container[data-column=2][data-col-position=${currentRow}]`).length !== 0) {
         return 2;
       }
-      else if($(`.img-container[data-column=1][data-col-position=${currentRow}]`).length !== 0) {
+      if($(`.img-container[data-column=1][data-col-position=${currentRow}]`).length !== 0) {
         return 1;
       }
     }
@@ -226,10 +268,9 @@ $(function() {
     }
   }
 
-  const checkPrevRow = () => {
-    console.log('checkPrevRow');
+  const getPreviousPosInPreviousRow = () => {
+    console.log('getPreviousPosInPreviousRow');
     if($(`.img-container[data-column=3][data-col-position=${currentRow - 1}]`).length !== 0) {
-      console.log('return 3')
       return 3;
     }
     if($(`.img-container[data-column=2][data-col-position=${currentRow - 1}]`).length !== 0) {
