@@ -28,6 +28,7 @@ router.post('/', function(req, res, next) {
         .catch(err => res.json(err));
       }
       else {
+        console.log(user);
         res.json({
           ok: false,
           error: 'Пользователь с таким логином уже существует',

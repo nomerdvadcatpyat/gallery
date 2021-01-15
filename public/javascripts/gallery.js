@@ -31,8 +31,6 @@ $(function() {
     let newImg = new Image();
     newImg.onload = function(){
       if(isFullScreenGallery()) {
-        console.log('req r c', reqRow, reqColumn);
-        console.log('current r c', currentRow, currentColumn);
         // Если пользователь будет быстро скроллить полнэкранную галерею, то покажется только последняя картинка
         if(reqRow === currentRow && reqColumn === currentColumn) {
           $('.full-img-layout__image-loader').remove();
@@ -70,9 +68,7 @@ $(function() {
   })
 
   $('.full-img-layout').on('click', function (e) {
-    // console.log(e.target)
     const targetClass = $(e.target).attr('class');
-    // console.log($(e.target).attr('class'));
     if(!targetClass.includes('full-img-layout__arrow-left') && !targetClass.includes('full-img-layout__arrow-right') && !targetClass.includes('full-img-layout__image')) {
       closeFullImageGallery();
     }
@@ -85,7 +81,6 @@ $(function() {
   $('.full-img-layout__arrow-left').on('click', () => showPreviousFullImage());
 
   $(window).on('keydown', (e) => {
-    console.log(e.code);
     if(isFullScreenGallery()) {
       if(e.code === "ArrowRight") showNextFullImage();
       else if (e.code === "ArrowLeft") showPreviousFullImage();
@@ -121,7 +116,6 @@ $(function() {
     $('.full-img-layout__image-loader').remove();
 
     const newPos = await getNextPosition();
-    console.log('newPos', newPos)
     currentRow = newPos.row;
     currentColumn = newPos.column;
 
@@ -134,7 +128,6 @@ $(function() {
   const loadNextImage = async () => {
     const nextPosition = await getNextPosition();
     const nextImageHref = $(`.img-container[data-column=${nextPosition.column}][data-col-position=${nextPosition.row}]`).data('href');
-    console.log(nextImageHref);
     new Image().src = nextImageHref;
   }
 
@@ -148,7 +141,6 @@ $(function() {
       res.column = 3;
       if($(`.img-container[data-column=3][data-col-position=${currentRow + 1}]`).length === 0) {
         const isNewImagesFounded = await addPicsInColumns();
-        console.log('isNewImagesFounded', isNewImagesFounded);
         if(isNewImagesFounded) {
           return getNextPosition();
         }
@@ -170,7 +162,6 @@ $(function() {
         }
         else {
           const isNewImagesFounded = await addPicsInColumns();
-          console.log('isNewImagesFounded', isNewImagesFounded);
           if(isNewImagesFounded) {
             return getNextPosition();
           }
@@ -202,7 +193,6 @@ $(function() {
   }
 
   const getNextPosInNextRow = () => {
-    console.log('getNextPosInNextRow');
     if($(`.img-container[data-column=1][data-col-position=${currentRow + 1}]`).length !== 0) {
       return 1;
     }
@@ -218,6 +208,7 @@ $(function() {
 
   const showPreviousFullImage = () => {
     $('.full-img-layout__image').remove();
+    $('.full-img-layout__image-loader').remove();
 
     const previousPosition = getPreviousPosition();
     currentRow = previousPosition.row;
@@ -269,7 +260,6 @@ $(function() {
   }
 
   const getPreviousPosInPreviousRow = () => {
-    console.log('getPreviousPosInPreviousRow');
     if($(`.img-container[data-column=3][data-col-position=${currentRow - 1}]`).length !== 0) {
       return 3;
     }

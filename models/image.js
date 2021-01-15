@@ -7,7 +7,8 @@ const ImageSchema = new Schema(
         minImage: String,
         minImageHeight: Number,
         alt: String,
-        owner: String
+        owner: String,
+        date_added: Date
     }
 );
 

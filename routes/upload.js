@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const dbapi = require('../utils/dbAPI.js');
 const config = require('../config');
-const gm = require('gm');
+const Jimp = require('jimp');
 const multer = require('multer'); // модуль для сохранения картинок
 const sizeOf = require('image-size');
 
@@ -50,29 +50,32 @@ router.post('/image', (req, res) => {
       res.json({ ok: false, error });
     }
     else { // сжимаем картинку и затем пишем данные в бд
-      console.log( MIN_IMAGES_DIR, req.file.filename);
-      console.log(req.file)
-
       mkdirpath(MIN_IMAGES_DIR);
 
-      gm(req.file.path)
-      .resize(600)
-      .write(path.join(MIN_IMAGES_DIR, req.file.filename), function(err, stdout) {
-        if(err) console.log('image err', err);
-
-        dbapi.uploadImage({ 
-          fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, req.file.filename), // В базу записываем относительно /public (статик директория для express)
-          minImage: path.join(`/${config.MIN_IMAGES_DESTINATION}`, req.file.filename),  
-          minImageHeight: sizeOf(path.join(__dirname, '..' , MIN_IMAGES_DIR, req.file.filename)).height,
-          alt: req.body.alt,
-          owner: req.session.userLogin })
-        .then(data => {
-          res.json({
-            ok: true
+      Jimp.read(req.file.path)
+        .then(fullPic => {
+          fullPic.resize(600, Jimp.AUTO)
+          .write(path.join(MIN_IMAGES_DIR, req.file.filename), function(err, stdout) {
+            if(err) console.log('image err', err);
+            else {
+              dbapi.uploadImage({ 
+                fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, req.file.filename), // В базу записываем относительно /public (статик директория для express)
+                minImage: path.join(`/${config.MIN_IMAGES_DESTINATION}`, req.file.filename),  
+                minImageHeight: sizeOf(path.join(__dirname, '..' , MIN_IMAGES_DIR, req.file.filename)).height,
+                alt: req.body.alt,
+                owner: req.session.userLogin })
+              .then(data => {
+                res.json({
+                  ok: true
+                });
+              })
+              .catch(err => console.log('err from add image in db', err));
+            }
           });
         })
-        .catch(err => console.log('err from add image in db', err));
-      });
+        .catch(err => {
+          console.log('jimp err', err);
+        });
     }  
   });
 });

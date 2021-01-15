@@ -59,7 +59,6 @@ export async function addPicsInColumns(owner) {
         url: `/images?limit=${limit}&skip=${skip}&condition=${JSON.stringify(galleryOwner)}`
       })
       .done(pics => {
-        console.log('ajax done');
         $('.content__loader').addClass('hidden')
         if(pics.length === 0) {
           isEnd = true;

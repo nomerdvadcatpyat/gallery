@@ -15,6 +15,7 @@ exports.getImages = function(condition, limitCount, skipCount) {
    return new Promise( (resolve, reject) => { 
      Image
     .find(condition)
+    .sort({date_added: -1})
     .skip(skipCount)
     .limit(limitCount)
     .exec((err, data) => {
@@ -26,7 +27,7 @@ exports.getImages = function(condition, limitCount, skipCount) {
 
 exports.uploadImage = function ({ fullImage, minImage, minImageHeight, alt, owner }) {
   return new Promise((resolve, reject) => {
-    Image.create({ fullImage, minImage, minImageHeight, alt, owner }, function(err, data) {
+    Image.create({ fullImage, minImage, minImageHeight, alt, owner, date_added: new Date() }, function(err, data) {
       console.log('create data', data);
       if(err) {
         console.log(err);
@@ -70,7 +71,7 @@ exports.checkUser = function(userData) {
     User
     .findOne({login: userData.login})
     .then(doc => {
-      console.log(doc)
+      console.log(doc);
       if(doc === null) resolve(null);
       if ( doc.password == hash(userData.password) ) {
           console.log("User password is ok");
