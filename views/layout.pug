@@ -4,6 +4,7 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/stylesheets/style.css")
+    link(href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet")
     link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css") 
     title Gallery
   body
@@ -18,11 +19,11 @@ html(lang="en")
           a.header__button.header__account-link(href="/account/" + userLogin) #{userLogin} 
       if(userLogin)
         .header__second-two-buttons
-          button.header__button.header__upload-image-button Загрузить Картинку
+          a.header__button.header__upload-image-button Загрузить Картинки
           a.header__button(href="/logout") Выход
       else
         .header__second-two-buttons
-          button.header__sign-in-open-button.header__button Вход/Регистрация
+          a.header__sign-in-open-button.header__button Вход
 
     .modal-layout.hidden
     //- Модальное окно входа/регистрации  
@@ -54,11 +55,11 @@ html(lang="en")
 
       //- Модальное окно загрузки картинки
     form.upload-image-form.hidden(method="POST" enctype="multipart/form-data" name="fileinfo" id="fileinfo")
-      input#file.upload-image-form__input-img(type="file" name="file" accept="image/jpeg,image/png")
+      input#file.upload-image-form__input-img(type="file" name="files" multiple="true" accept="image/jpeg,image/png")
       label.upload-image-form__input-img-label(for="file")
         i.icon.fa.fa-check
-        span.upload-image-form__file-name Загрузить картинку
-      input.upload-image-form__img-description(type="text" placeholder="Краткое описание картинки")
+        span.upload-image-form__file-name Загрузить картинки
+      .images-for-upload
       button.upload-image-form__submit.modal-button.modal-button_active Отправить
     block content
 

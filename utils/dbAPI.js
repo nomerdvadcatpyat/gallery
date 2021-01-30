@@ -25,16 +25,16 @@ exports.getImages = function(condition, limitCount, skipCount) {
   });
 }
 
-exports.uploadImage = function ({ fullImage, minImage, minImageHeight, alt, owner }) {
+exports.uploadImages = function (images) {
   return new Promise((resolve, reject) => {
-    Image.create({ fullImage, minImage, minImageHeight, alt, owner, date_added: new Date() }, function(err, data) {
+    Image
+    .insertMany(images)
+    .then(data => {
+      console.log(images);
       console.log('create data', data);
-      if(err) {
-        console.log(err);
-        reject(err);
-      }
-      resolve(data);
+      resolve()
     })
+    .catch(err => reject('err from add image in db', err));
   });
 }
 

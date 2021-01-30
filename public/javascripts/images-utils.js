@@ -84,7 +84,7 @@ export async function addPicsInColumns(owner) {
 
 function getHtmlPic(pic, columnNum) {
     return $(`<section class="img-container img-container_non-active ${isMobile ? 'mobile-pic' : 'desktop-pic'}" data-href=${pic.fullImage} data-column=${columnNum} data-col-position=${pic.posInColumn} tabindex="-1">
-                <img class="img-container__img img-container__img_preload" src="/images/site-images/Blocks-1s-300px.gif" data-src=${pic.minImage} alt=${pic.alt}>
+                <img class="img-container__img img-container__img_preload" alt="${pic.alt}" src="/images/site-images/Blocks-1s-300px.gif" data-src=${pic.minImage} >
                 <section class="img-container__info img-info">
                   <a class="img-info__link" href="/account/${pic.owner}">${pic.owner}</a>
                   <p class="img-info__text">${pic.alt}</p>
