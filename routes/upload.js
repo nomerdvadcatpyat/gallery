@@ -66,7 +66,6 @@ const upload = multer({
 
 router.post('/image', (req, res) => {
   upload(req, res, err => { // загружаем полноразмерную картинку
-    req.files.forEach(file => console.log('new file is', file));
 
     const descriptions = JSON.parse(req.body.descriptions);
 
@@ -78,12 +77,9 @@ router.post('/image', (req, res) => {
         error = "Картинка не более 5mb";
       else if(err.code === 'EXTENTION') 
         error = 'Только jpeg и png';
-      console.log(error);
       res.json({ ok: false, error });
     }
     else { // сжимаем картинки и затем пишем данные в бд
-      console.log('descr', descriptions);
-
       (async() => {
         const images = [];
         await Promise.all(req.files.map(async image => {

@@ -27,7 +27,6 @@ router.post('/', function(req, res, next) {
         });
       } 
       else {
-        console.log(user);
         req.session.userId = user.id;
         req.session.userLogin = user.login;
         res.json({

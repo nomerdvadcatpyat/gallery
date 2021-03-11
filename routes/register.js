@@ -7,7 +7,6 @@ router.post('/', function(req, res, next) {
   const login = req.body.login;
   const pass = req.body.pass;
   const rePass = req.body.rePass;
-  console.log(req.body);
 
   const error = findErrorInFields(login, pass, rePass);
   if(error) res.json(error); 
@@ -20,7 +19,6 @@ router.post('/', function(req, res, next) {
           password: pass
         })
         .then(user => {
-          console.log('then user', user);
           req.session.userId = user.id;
           req.session.userLogin = user.login;
           res.json({ok: true});
@@ -28,7 +26,6 @@ router.post('/', function(req, res, next) {
         .catch(err => res.json(err));
       }
       else {
-        console.log(user);
         res.json({
           ok: false,
           error: 'Пользователь с таким логином уже существует',

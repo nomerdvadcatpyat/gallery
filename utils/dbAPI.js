@@ -30,8 +30,6 @@ exports.uploadImages = function (images) {
     Image
     .insertMany(images)
     .then(data => {
-      console.log(images);
-      console.log('create data', data);
       resolve()
     })
     .catch(err => reject('err from add image in db', err));
@@ -46,7 +44,6 @@ exports.createUser = function(userData){
     }
     return new Promise((resolve, reject) => {
         User.create(user, function(err, data) {
-            console.log('create data', data);
             if(err) {
                 console.log(err);
                 reject(err);
@@ -71,10 +68,8 @@ exports.checkUser = function(userData) {
     User
     .findOne({login: userData.login})
     .then(doc => {
-      console.log(doc);
       if(doc === null) resolve(null);
       if ( doc.password == hash(userData.password) ) {
-          console.log("User password is ok");
           resolve(doc);
       }
       resolve(null);
