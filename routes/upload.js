@@ -1,24 +1,51 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
 const path = require('path');
 const dbapi = require('../utils/dbAPI.js');
 const config = require('../config');
-const Jimp = require('jimp');
 const multer = require('multer'); // модуль для сохранения картинок
 const sizeOf = require('image-size');
+const aws = require('aws-sdk');
+const multerS3 = require('multer-s3-transform');
+const url = require('url');
+const https = require('https');
+const sharp = require('sharp');
 
-const FULL_IMAGES_DIR = path.join(config.STATIC_DESTINATION, config.FULL_IMAGES_DESTINATION);
-const MIN_IMAGES_DIR = path.join(config.STATIC_DESTINATION, config.MIN_IMAGES_DESTINATION);
+const s3 = new aws.S3({ 
+  accessKeyId: config.S3_ACCESS_KEY_ID,
+  secretAccessKey: config.S3_SECRET_ACCESS_KEY
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(FULL_IMAGES_DIR));
+const storage = multerS3({
+  s3: s3,
+  bucket: 'galllery',
+  acl: 'public-read-write',
+  metadata: function (req, file, cb) {
+    cb(null, {fieldName: file.fieldname});
   },
-  filename: (req, file, cb) => {
-    mkdirpath(FULL_IMAGES_DIR);
+  key: function (req, file, cb) {
     cb(null, path.basename(file.originalname) + Date.now() + path.extname(file.originalname))
-  }
+  },
+  shouldTransform: function (req, file, cb) {
+    cb(null, /^image/i.test(file.mimetype))
+  },
+  transforms: [{
+    id: 'original',
+    key: function (req, file, cb) {
+      cb(null, path.basename(file.originalname) + Date.now()  + path.extname(file.originalname))
+    },
+    transform: function (req, file, cb) {
+      cb(null, sharp().jpeg())
+    }
+  }, {
+    id: 'thumbnail',
+    key: function (req, file, cb) {
+      cb(null, path.basename(file.originalname) + Date.now() + '-min' + path.extname(file.originalname)) 
+    },
+    transform: function (req, file, cb) {
+      cb(null, sharp().resize({ width: 600 }).jpeg())
+    }
+  }]
 });
 
 const upload = multer({
@@ -35,10 +62,11 @@ const upload = multer({
   }
 }).array('files'); // 'files' это name инпута из формы
 
+
+
 router.post('/image', (req, res) => {
   upload(req, res, err => { // загружаем полноразмерную картинку
-
-    req.files.forEach(file => console.log(file.filename));
+    req.files.forEach(file => console.log('new file is', file));
 
     const descriptions = JSON.parse(req.body.descriptions);
 
@@ -54,14 +82,14 @@ router.post('/image', (req, res) => {
       res.json({ ok: false, error });
     }
     else { // сжимаем картинки и затем пишем данные в бд
-      mkdirpath(MIN_IMAGES_DIR);
+      console.log('descr', descriptions);
 
       (async() => {
         const images = [];
         await Promise.all(req.files.map(async image => {
 
           for(let key in descriptions) {
-            if(image.filename.startsWith(key)) {
+            if(image.originalname.startsWith(key)) {
               image.alt = descriptions[key];
               break;
             }
@@ -71,45 +99,46 @@ router.post('/image', (req, res) => {
           const resizedImage = await getResizedImage(image);
           images.push(resizedImage);
         }));
+
         dbapi
           .uploadImages(images)
           .then(() => res.json( { ok: true } ))
           .catch(err => console.log(err));
       })();
-
     }  
   });
 });
 
 async function getResizedImage(image) {
+  const minImageUrl = image.transforms.find(img => img.id === 'thumbnail').location
+  const minImageHeight = await getMinImageHeight(minImageUrl);
+
   return new Promise((resolve, reject) => {
-    Jimp.read(image.path)
-        .then(fullPic => {
-          fullPic.resize(600, Jimp.AUTO)
-              .write(path.join(MIN_IMAGES_DIR, image.filename), function(err, stdout) {
-                  if (err) reject(err);
-                  resolve({
-                    fullImage: path.join(`/${config.FULL_IMAGES_DESTINATION}`, image.filename),
-                    minImage: path.join(`/${config.MIN_IMAGES_DESTINATION}`, image.filename),
-                    minImageHeight: sizeOf(path.join(__dirname, '..', MIN_IMAGES_DIR, image.filename)).height,
-                    owner: image.owner,
-                    alt: image.alt || '',
-                    date_added: new Date()
-                  });
-              });
-        })
-        .catch(err => {
-            console.log('jimp error', err);
-        });
+      resolve({
+        fullImage: image.transforms.find(img => img.id === 'original').location,
+        minImage: minImageUrl,
+        minImageHeight: minImageHeight,
+        owner: image.owner,
+        alt: image.alt || '',
+        date_added: new Date()
+      });
   });
 }
 
-function mkdirpath(dirPath) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath);
-  } else {
-    console.log("Directory already exist");
-  }
+async function getMinImageHeight(imgUrl) {
+  return new Promise((res, rej) => {
+    const options = url.parse(imgUrl);
+
+    https.get(options, function (response) {
+      const chunks = []
+      response.on('data', function (chunk) {
+        chunks.push(chunk)
+      }).on('end', function() {
+        const buffer = Buffer.concat(chunks)
+        res(sizeOf(buffer).height);
+      })
+    })
+  });
 }
 
 module.exports = router;
